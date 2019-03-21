@@ -27,6 +27,22 @@
     <a href="#main-content" class="btn btn-default btn-block btn-lg btn-offcanvas" tabindex="2"><?php _e('Jump to the main content', 'municipio'); ?></a>
 
     <div id="wrapper">
+
+        {!! 
+            utility('button', [
+                'isDisabled' => true,
+
+                'label' => "Test"
+            ]) 
+        !!}
+
+        {!! 
+            utility('date', [
+                'isHumanReadable' => false
+            ]) 
+        !!}
+
+
         @if (isset($notice) && !empty($notice))
             <div class="notices">
             @if (!isset($notice['text']) && is_array($notice))

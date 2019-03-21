@@ -251,3 +251,20 @@ if (!function_exists('municipio_get_user_profile_url')) {
         return network_site_url('user/' . $user->data->user_login);
     }
 }
+
+
+if (!function_exists('utility')) {
+    /**
+     * Get a utility component
+     * 
+     * @param string $slug       Slug of utility
+     * @param array  $attributes The settings of the utility
+     * 
+     * @return string
+     */
+    function utility($slug, $attributes = array())
+    {
+       $utility = new Municipio\Theme\Utility($slug, $attributes);
+       return $utility->render(); 
+    }
+}
