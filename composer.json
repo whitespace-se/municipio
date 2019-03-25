@@ -25,13 +25,13 @@
     ],
     "require": {
         "composer/installers": "^1.0",
-        "helsingborg-stad/laravel-blade": "5.5",
         "symfony/debug": "^3.0",
         "wpackagist-plugin/advanced-custom-fields": "^4.4.7",
         "helsingborg-stad/acf-export-manager": ">=1.0.0",
         "aristath/kirki": "3.0.34",
         "shortpixel/shortpixel-php": "^1.4",
-        "helsingborg-stad/blade-component-library": "^0.0.1"
+        "helsingborg-stad/blade-component-library": "^0.0.1",
+        "helsingborg-stad/laravel-blade": "^5.5"
     },
     "extra" : {
         "installer-paths" : {

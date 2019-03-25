@@ -16,11 +16,11 @@
     "require": {
         "php": "^7.0",
         "illuminate/view": "5.5.41",
-        "illuminate/events": "5.5.44"
+        "illuminate/events": "5.5.43"
     },
     "autoload": {
         "psr-4": {
-            "Philo\\Blade\\": "src"
+            "HelsingborgStad\\Blade\\": "src"
         }
     }
 }

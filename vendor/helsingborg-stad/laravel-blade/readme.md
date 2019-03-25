@@ -2,7 +2,7 @@
 This is a fork of the fantastic work by Philo Hermans. It's purpose is to provide with an up to date version of laravel blade package as a standalone version. From version 5.5 and forward the versioning system will mimic the version of the native versioning of laravel. To get version 5.8 of laravel, simple request it here and you will get that. No more figuring out what version that represents what in laravel (patches will not follow this).
 
 
-### Installation (Blade Laravel 5.8) - Not yet released
+### Installation (Blade Laravel 5.8) - Released: 2019-03-22
 The package can be installed via Composer by requiring the "helsingborg-stad/laravel-blade": "5.8" package in your project's composer.json. 
 
 ```json

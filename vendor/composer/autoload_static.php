@@ -29,7 +29,6 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Container\\' => 14,
-            'Philo\\Blade\\' => 12,
         ),
         'I' => 
         array (
@@ -39,6 +38,10 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
             'Illuminate\\Events\\' => 18,
             'Illuminate\\Contracts\\' => 21,
             'Illuminate\\Container\\' => 21,
+        ),
+        'H' => 
+        array (
+            'HelsingborgStad\\Blade\\' => 22,
         ),
         'D' => 
         array (
@@ -95,10 +98,6 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Philo\\Blade\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/helsingborg-stad/laravel-blade/src',
-        ),
         'Illuminate\\View\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/view',
@@ -122,6 +121,10 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         'Illuminate\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/container',
+        ),
+        'HelsingborgStad\\Blade\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/helsingborg-stad/laravel-blade/src',
         ),
         'Doctrine\\Common\\Inflector\\' => 
         array (

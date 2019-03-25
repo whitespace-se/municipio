@@ -328,30 +328,30 @@
     },
     {
         "name": "helsingborg-stad/laravel-blade",
-        "version": "5.5.0",
-        "version_normalized": "5.5.0.0",
+        "version": "5.5.1",
+        "version_normalized": "5.5.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/helsingborg-stad/laravel-blade.git",
-            "reference": "cfa1e41e832067f81d21ae94714fe67aa3495475"
+            "reference": "078bf5078da443559b73f20a40ec96a8a744ac5f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/helsingborg-stad/laravel-blade/zipball/cfa1e41e832067f81d21ae94714fe67aa3495475",
-            "reference": "cfa1e41e832067f81d21ae94714fe67aa3495475",
+            "url": "https://api.github.com/repos/helsingborg-stad/laravel-blade/zipball/078bf5078da443559b73f20a40ec96a8a744ac5f",
+            "reference": "078bf5078da443559b73f20a40ec96a8a744ac5f",
             "shasum": ""
         },
         "require": {
-            "illuminate/events": "5.5.44",
+            "illuminate/events": "5.5.43",
             "illuminate/view": "5.5.41",
             "php": "^7.0"
         },
-        "time": "2019-03-22T09:03:18+00:00",
+        "time": "2019-03-22T10:22:52+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Philo\\Blade\\": "src"
+                "HelsingborgStad\\Blade\\": "src"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -468,17 +468,17 @@
     },
     {
         "name": "illuminate/events",
-        "version": "v5.5.44",
-        "version_normalized": "5.5.44.0",
+        "version": "v5.5.43",
+        "version_normalized": "5.5.43.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/events.git",
-            "reference": "11b4b917c3f02140b528e849f883a4a9e7ff8af7"
+            "reference": "1b558bfa1013f25b35e593c83fce7990d20c4d97"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/illuminate/events/zipball/11b4b917c3f02140b528e849f883a4a9e7ff8af7",
-            "reference": "11b4b917c3f02140b528e849f883a4a9e7ff8af7",
+            "url": "https://api.github.com/repos/illuminate/events/zipball/1b558bfa1013f25b35e593c83fce7990d20c4d97",
+            "reference": "1b558bfa1013f25b35e593c83fce7990d20c4d97",
             "shasum": ""
         },
         "require": {
