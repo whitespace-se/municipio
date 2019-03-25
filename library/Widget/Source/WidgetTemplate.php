@@ -2,7 +2,7 @@
 
 namespace Municipio\Widget\Source;
 
-use Philo\Blade\Blade as Blade;
+use HelsingborgStad\Blade\Blade as Blade;
 
 abstract class WidgetTemplate extends \WP_Widget
 {

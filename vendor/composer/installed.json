@@ -289,6 +289,92 @@
         }
     },
     {
+        "name": "helsingborg-stad/blade-component-library",
+        "version": "0.0.1",
+        "version_normalized": "0.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/helsingborg-stad/blade-component-library.git",
+            "reference": "3b337a0946e27d3b3ccae043b159a5dac9a15e3e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/helsingborg-stad/blade-component-library/zipball/3b337a0946e27d3b3ccae043b159a5dac9a15e3e",
+            "reference": "3b337a0946e27d3b3ccae043b159a5dac9a15e3e",
+            "shasum": ""
+        },
+        "require": {
+            "helsingborg-stad/laravel-blade": "^5.5"
+        },
+        "time": "2019-03-22T09:37:22+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "BladeComponentLibrary\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Sebastian Thulin",
+                "email": "sebastian.thulin@helsingborg.se"
+            }
+        ],
+        "description": "A component library based upon blade engine."
+    },
+    {
+        "name": "helsingborg-stad/laravel-blade",
+        "version": "5.5.0",
+        "version_normalized": "5.5.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/helsingborg-stad/laravel-blade.git",
+            "reference": "cfa1e41e832067f81d21ae94714fe67aa3495475"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/helsingborg-stad/laravel-blade/zipball/cfa1e41e832067f81d21ae94714fe67aa3495475",
+            "reference": "cfa1e41e832067f81d21ae94714fe67aa3495475",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/events": "5.5.44",
+            "illuminate/view": "5.5.41",
+            "php": "^7.0"
+        },
+        "time": "2019-03-22T09:03:18+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Philo\\Blade\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Philo Hermans",
+                "email": "me@philohermans.com"
+            },
+            {
+                "name": "Sebastian Thulin",
+                "email": "sebastian.thulin@helsingborg.se"
+            }
+        ],
+        "description": "Use the simple and yet powerful Laravel Blade templating engine as a standalone component.",
+        "keywords": [
+            "blade",
+            "laravel"
+        ]
+    },
+    {
         "name": "illuminate/container",
         "version": "v5.5.44",
         "version_normalized": "5.5.44.0",
@@ -540,17 +626,17 @@
     },
     {
         "name": "illuminate/view",
-        "version": "v5.5.44",
-        "version_normalized": "5.5.44.0",
+        "version": "v5.5.41",
+        "version_normalized": "5.5.41.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/view.git",
-            "reference": "892aa32a1b496cbafa5125bcc3f97ff795265f95"
+            "reference": "d101d49ebf6a4876f28b8a5ed1f205b0a73fd8c9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/illuminate/view/zipball/892aa32a1b496cbafa5125bcc3f97ff795265f95",
-            "reference": "892aa32a1b496cbafa5125bcc3f97ff795265f95",
+            "url": "https://api.github.com/repos/illuminate/view/zipball/d101d49ebf6a4876f28b8a5ed1f205b0a73fd8c9",
+            "reference": "d101d49ebf6a4876f28b8a5ed1f205b0a73fd8c9",
             "shasum": ""
         },
         "require": {
@@ -562,7 +648,7 @@
             "php": ">=7.0",
             "symfony/debug": "~3.3"
         },
-        "time": "2018-10-04T14:46:49+00:00",
+        "time": "2018-01-06T12:12:26+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -646,49 +732,6 @@
             "date",
             "datetime",
             "time"
-        ]
-    },
-    {
-        "name": "philo/laravel-blade",
-        "version": "v3.1",
-        "version_normalized": "3.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/PhiloNL/Laravel-Blade.git",
-            "reference": "3f0ce2ee198604c53c25188110e6d7b5e887527a"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/PhiloNL/Laravel-Blade/zipball/3f0ce2ee198604c53c25188110e6d7b5e887527a",
-            "reference": "3f0ce2ee198604c53c25188110e6d7b5e887527a",
-            "shasum": ""
-        },
-        "require": {
-            "illuminate/events": "~5",
-            "illuminate/view": "~5"
-        },
-        "time": "2015-12-04T09:42:42+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Philo\\Blade\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Philo Hermans",
-                "email": "me@philohermans.com"
-            }
-        ],
-        "description": "Use the simple and yet powerful Laravel Blade templating engine as a standalone component.",
-        "keywords": [
-            "blade",
-            "laravel"
         ]
     },
     {
@@ -1079,17 +1122,17 @@
     },
     {
         "name": "symfony/polyfill-mbstring",
-        "version": "v1.10.0",
-        "version_normalized": "1.10.0.0",
+        "version": "v1.11.0",
+        "version_normalized": "1.11.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-mbstring.git",
-            "reference": "c79c051f5b3a46be09205c73b80b346e4153e494"
+            "reference": "fe5e94c604826c35a32fa832f35bd036b6799609"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/c79c051f5b3a46be09205c73b80b346e4153e494",
-            "reference": "c79c051f5b3a46be09205c73b80b346e4153e494",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/fe5e94c604826c35a32fa832f35bd036b6799609",
+            "reference": "fe5e94c604826c35a32fa832f35bd036b6799609",
             "shasum": ""
         },
         "require": {
@@ -1098,11 +1141,11 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2018-09-21T13:07:52+00:00",
+        "time": "2019-02-06T07:57:58+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.9-dev"
+                "dev-master": "1.11-dev"
             }
         },
         "installation-source": "dist",

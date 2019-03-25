@@ -48,6 +48,10 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         array (
             'Composer\\Installers\\' => 20,
         ),
+        'B' => 
+        array (
+            'BladeComponentLibrary\\' => 22,
+        ),
         'A' => 
         array (
             'AcfExportManager\\' => 17,
@@ -93,7 +97,7 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         ),
         'Philo\\Blade\\' => 
         array (
-            0 => __DIR__ . '/..' . '/philo/laravel-blade/src',
+            0 => __DIR__ . '/..' . '/helsingborg-stad/laravel-blade/src',
         ),
         'Illuminate\\View\\' => 
         array (
@@ -126,6 +130,10 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         'Composer\\Installers\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
+        ),
+        'BladeComponentLibrary\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/helsingborg-stad/blade-component-library/src',
         ),
         'AcfExportManager\\' => 
         array (

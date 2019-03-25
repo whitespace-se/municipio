@@ -1,8 +1,6 @@
 <?php
-/*
-namespace Municipio\Theme;
 
-use Municipio\Helper\Utility as Utility;
+namespace Municipio\Theme;
 
 class RegisterUtility
 {
@@ -45,4 +43,4 @@ class RegisterUtility
             'date-time.blade.php' 
         );
     }
-}*/ 
+}
