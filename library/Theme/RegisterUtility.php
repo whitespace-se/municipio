@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace Municipio\Theme;
 
 use Municipio\Helper\Utility as Utility;
@@ -45,4 +45,4 @@ class RegisterUtility
             'date-time.blade.php' 
         );
     }
-}
+}*/ 

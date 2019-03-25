@@ -28,21 +28,6 @@
 
     <div id="wrapper">
 
-        {!! 
-            utility('button', [
-                'isDisabled' => true,
-
-                'label' => "Test"
-            ]) 
-        !!}
-
-        {!! 
-            utility('date', [
-                'isHumanReadable' => false
-            ]) 
-        !!}
-
-
         @if (isset($notice) && !empty($notice))
             <div class="notices">
             @if (!isset($notice['text']) && is_array($notice))

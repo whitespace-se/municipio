@@ -45,7 +45,7 @@ class App
         new \Municipio\Theme\ColorScheme();
         new \Municipio\Theme\FixedActionBar();
         new \Municipio\Theme\Share();
-        new \Municipio\Theme\RegisterUtility();
+        //new \Municipio\Theme\RegisterUtility();
 
         new \Municipio\Search\General();
         new \Municipio\Search\Algolia();
