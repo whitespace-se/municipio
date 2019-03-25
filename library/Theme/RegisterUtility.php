@@ -17,8 +17,8 @@ class RegisterUtility
         \BladeComponentLibrary\Register::addControllerPath(
             MUNICIPIO_PATH . 'library/Controller/Utility/'
         );
-/*
-        Utility::add(
+
+        \BladeComponentLibrary\Register::add(
             'button',
             [
                 'isPrimary' => true,
@@ -33,7 +33,7 @@ class RegisterUtility
             'button.blade.php' // You can leave this out, it will automatically be generated from slug. 
         );
 
-        Utility::add(
+        \BladeComponentLibrary\Register::add(
             'date',
             [
                 'hasTime' => false,
@@ -42,8 +42,5 @@ class RegisterUtility
             ],
             'date-time.blade.php' 
         );
-
-
-    */ 
     }
 }
