@@ -6,18 +6,18 @@ class RegisterUtility
 {
     public function __construct()
     {
-        Utility::setCachePath(
+        \BladeComponentLibrary\Register::setCachePath(
             WP_CONTENT_DIR . '/uploads/cache/blade-cache/utility'
         );
 
-        Utility::addViewPath(
+        \BladeComponentLibrary\Register::addViewPath(
             MUNICIPIO_PATH . 'views/utility'
         ); 
 
-        Utility::addControllerPath(
+        \BladeComponentLibrary\Register::addControllerPath(
             MUNICIPIO_PATH . 'library/Controller/Utility/'
         );
-
+/*
         Utility::add(
             'button',
             [
@@ -42,5 +42,8 @@ class RegisterUtility
             ],
             'date-time.blade.php' 
         );
+
+
+    */ 
     }
 }

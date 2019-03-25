@@ -2,7 +2,7 @@
 
 namespace Municipio;
 
-use HelsingborgStad\Blade\Blade as Blade;
+use \HelsingborgStad\Blade\Blade as Blade;
 
 class Template
 {
