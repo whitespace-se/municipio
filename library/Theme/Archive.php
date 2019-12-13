@@ -124,7 +124,7 @@ class Archive
         }
 
         // Modify query to check for page instead of post_type
-        $query->set('post_type', 'page');
+        // $query->set('post_type', 'page');
         $query->set('child_of', $pageForPostType);
     }
 }
