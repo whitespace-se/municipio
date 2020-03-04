@@ -35,8 +35,8 @@
 
     @if (have_posts())
         <div
-            class="archive s-archive s-archive-template-{{sanitize_title($template)}}  s-{{sanitize_title($postType)}}-archive grid grid--columns"
-            @if (apply_filters('archive_equal_container', false, $postType, $template)) data-equal-container @endif>
+            class="archive s-archive s-archive-template-{{sanitize_title($template)}}  s-{{sanitize_title($postType)}}-archive grid"
+            @if (apply_filters('archive_equal_container', false, $postType, $template))  @endif>
 
             @if (get_field('archive_' . sanitize_title($postType) . '_filter_position', 'option') == 'content')
                 @includeFirst(["partials.archive.archive-" . sanitize_title($postType) .
@@ -47,12 +47,14 @@
             <?php $postNum = 0; ?>
             @while(have_posts())
                 {!! the_post() !!}
-
-                    @includeIf('partials.post.post-' . $template)
-
+                    <div class="grid-sm-12 grid-md-4">
+                        @includeIf('partials.post.post-cards', ['post' => $posts[$postNum]])
+                    </div>
                 <?php $postNum++; ?>
             @endwhile
         </div>
+        @pagination(['list' => $paginationList])
+        @endpagination
     @else
         {{-- TODO: add a notice component --}}
         <?php _e('No posts to show', 'municipio'); ?>
@@ -60,13 +62,6 @@
 
 
     @includeIf('partials.sidebar.default', ['id' => 'content-area'])
-
-
-    {!!
-        paginate_links(array(
-            'type' => 'list'
-        ))
-    !!}
 
 @stop
 
