@@ -11,7 +11,7 @@ class Navigation
 
     public function registerEndpoint()
     {
-        register_rest_route('municipio/v1', '/navigation/(?P<id>\d+)', array(
+        register_rest_route('municipio/v1', '/navigation/(?P<parentID>\d+)', array(
             'methods' => 'GET',
             'callback' => array($this, 'getSubmenu'),
         ));
@@ -19,30 +19,20 @@ class Navigation
 
     public function getSubmenu($data)
     {
-        //Switch blog if differ blog id
-        if(isset($data['blogId']) && is_numeric($data['blogId'])) {
-            if($data['blogId'] != get_current_blog_id()) {
-                switch_to_blog($data['blogId']);
-                $blogIdswitch = true;
-            } else {
-                $blogIdswitch = false;
-            }
+        $children = get_children($data['parentID']);
+        $subMenu =  [];
+        
+        foreach($children as $key =>  $child){
+            $child = array(
+                'ID' => $child->ID,
+                'post_parent' => $child->post_parent,
+                'post_title' => $child->post_title,
+                'href' => $array['href'] = get_permalink($child->ID)
+            );
+            
+            $subMenu[] = $child;
         }
-
-        $submenu = new \Municipio\Helper\NavigationTree(
-            array(
-                'include_top_level' => false,
-                'depth' => 2,
-                'wrapper' => '%3$s'
-            ),
-            $data['id']
-        );
-
-        //Restore blog
-        if($blogIdswitch) {
-            restore_current_blog(); 
-        }
-
-        return '<ul class="sub-menu">' . $submenu->render(false) . '</ul>';
+        
+        return $subMenu;
     }
 }
