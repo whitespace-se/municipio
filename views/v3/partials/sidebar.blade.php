@@ -1,7 +1,8 @@
-@if(isset($id) && $id)
-    @if (is_active_sidebar($id))
-        <div class="sidebar-{{$id}} {{isset($classes) ? is_array($classes) ? implode(' ', $classes) : $classes : ''}}">
-            @php dynamic_sidebar($id); @endphp
-        </div>
-    @endif
-@endif
+@sidebar([
+    'logo' => '/assets/img/logotype-grey-full.svg',
+    'items' => $sideNavigation,
+    'classList' => ['l-docs--sidebar'],
+    'children' => '/wp/wp-json/municipio/v1/navigation'
+])
+
+@endsidebar

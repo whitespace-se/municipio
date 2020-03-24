@@ -96,7 +96,7 @@ class Nav
       WHERE post_parent = '". $array['ID'] . "'
       LIMIT 1
     ", ARRAY_A);
-
+    
     if(!empty($children)) {
       $array['children'] = true; 
     } else {

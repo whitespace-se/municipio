@@ -1,5 +1,5 @@
 <!-- sidebar.blade.php -->
-<nav id="{{ $id }}" class="{{$class}} c-sidebar--collapsed" {!! $attribute !!} js-sidebar>
+<nav id="{{ $id }}" class="{{$class}} c-sidebar--collapsed" child-items-url="{{$children}}" {!! $attribute !!} js-sidebar>
 
     @if (!empty($logo))
         <a href="/">

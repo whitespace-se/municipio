@@ -49,6 +49,7 @@ class BaseController
         //Navigation
         $this->data['topNavigation']        = \Municipio\Helper\Nav::getTopLevel($this->getPageID()); 
         $this->data['sideNavigation']       = \Municipio\Helper\Nav::getNested($this->getPageID()); 
+        //die(print_r($this->data['sideNavigation']));
 
         //Language
         $this->data['lang'] = array(

@@ -13,19 +13,18 @@
                 {{$item['label']}}
             </a>
 
-            @if (isset($item['children']))
+            @if ($item['children'])
                 @php
                     $rndId = uniqid();
                 @endphp
                 <div class="{{$baseClass}}__toggle"
-                    js-toggle-trigger="{{$rndId}}"
+                    aria-label="{{$item['ID']}}"
                     aria-pressed="false">
 
                     <div class="bar"></div>
                     <div class="bar"></div>
                 </div>
 
-                @include ('Sidebar.item', array('items' => $item['children'], 'appendID' => $rndId, 'top_level' => false))
             @endif
         </div>
     @endforeach

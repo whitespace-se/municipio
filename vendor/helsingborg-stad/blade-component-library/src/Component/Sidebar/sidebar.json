@@ -4,7 +4,8 @@
         "logo": "",
         "logoCondensed": "/assets/img/logotype-grey.svg",
         "items": [],
-        "showHideButton": false
+        "showHideButton": false,
+        "children": ""
     },
     "description":{
         "logo":"A link to a logo",

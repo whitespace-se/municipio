@@ -11,7 +11,7 @@ class Navigation
 
     public function registerEndpoint()
     {
-        register_rest_route('municipio/v1', '/navigation/(?P<parentID>\d+)', array(
+        register_rest_route('municipio/v1', '/navigation', array(
             'methods' => 'GET',
             'callback' => array($this, 'getSubmenu'),
         ));
@@ -19,20 +19,26 @@ class Navigation
 
     public function getSubmenu($data)
     {
-        $children = get_children($data['parentID']);
-        $subMenu =  [];
         
-        foreach($children as $key =>  $child){
-            $child = array(
-                'ID' => $child->ID,
-                'post_parent' => $child->post_parent,
-                'post_title' => $child->post_title,
-                'href' => $array['href'] = get_permalink($child->ID)
-            );
+        if(isset($data->get_params()['parentID'])){
             
-            $subMenu[] = $child;
+            $children = get_children($data->get_params()['parentID']);
+            $subMenu =  [];
+            //die(print_r($children));
+            foreach($children as $key =>  $child){
+                
+                $child = array(
+                    'ID' => $child->ID,
+                    'post_parent' => $child->post_parent,
+                    'post_title' => $child->post_title,
+                    'href' => $array['href'] = get_permalink($child->ID),
+                    'children' => get_children($child->ID)
+                );
+                
+                $subMenu[] = $child;
+            }
+            
+            return $subMenu;
         }
-        
-        return $subMenu;
     }
 }
