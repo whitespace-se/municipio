@@ -5,28 +5,38 @@ export default class Sidebar{
         this.ATTR = "js-sidebar";
         this.EXPAND = "c-sidebar__item--is-expanded";
         this.EXPANDABLE = "c-sidebar__subcontainer";
-        this.ACTIVEITEMS = "active";
+        this.TOGGLEDITEMS = 'toggled';
+        this.ACTIVEITEMS = 'active'
         this.ACTIVE = "item-active";
         this.TRIGGER = "js-sidebar-trigger";
         this.URL = "children"
         
+        if(localStorage.getItem(this.TOGGLEDITEMS) === null){
+            localStorage.setItem(this.TOGGLEDITEMS, JSON.stringify({items: []}));
+        }
+        
         if(localStorage.getItem(this.ACTIVEITEMS) === null){
-            localStorage.setItem('active', JSON.stringify({items: []}));
+            localStorage.setItem(this.ACTIVEITEMS, JSON.stringify({items: []}));
         }
     }
 
     async loadState() {
+        console.log("LOAD");
+        
         const sb = document.getElementsByClassName('c-sidebar')[0];
         this.URL = sb.getAttribute('child-items-url');
-        const activeItems = this.getActiveItems();
+        const activeItems = this.getItems(this.TOGGLEDITEMS);
         for(const item of activeItems.items) {
             const children = await this.appendChildren(item);  
             const parent = document.querySelector(`[aria-label='${item}']`).parentElement;
             
             parent.appendChild(children)
+            console.log(parent)
             this.toggleAriaPressed(document.querySelector(`[aria-label='${item}']`));
             this.addItemTriggers();
         };
+        console.log('WHAT')
+        this.markActiveTree();
     }
 
     toggleAriaPressed(element) {
@@ -35,6 +45,33 @@ export default class Sidebar{
             element.setAttribute('aria-pressed', 'false');
         }else{
             element.setAttribute('aria-pressed', 'true');
+        }
+    }
+
+    addLinkTrigger(link) {
+        link.addEventListener('click', (event) => {
+            const linkID = link.id;
+            
+            this.storeItem(linkID, this.ACTIVEITEMS);
+        });
+    }
+
+    markActiveTree() {
+        console.log('MARK');
+        const activeLinkID = this.getItems(this.ACTIVEITEMS).items[0];
+        console.log(activeLinkID);
+        let traversing = true;
+
+        const currentLink = document.getElementById(activeLinkID)
+        const item = currentLink.parentElement;
+        const subContainer = item.parentElement;
+        const parentLink = subContainer.parentElement;
+
+        console.log('currentItem')
+        console.log(currentItem)
+
+        while(traversing) {
+            
         }
     }
 
@@ -58,11 +95,11 @@ export default class Sidebar{
                     this.appendChildren(parentID, e.target.parentElement).then((children) => {
                         if(!this.isAlreadyStored(parentID)) {
                             parent.appendChild(children);
-                            this.storeActiveItem(parentID);
+                            this.storeItem(parentID, this.TOGGLEDITEMS);
                             this.addItemTriggers();
                         }else{
-                            this.removeActiveElement(parentID);
-                            this.removeActiveItem(parentID);
+                            this.removeToggledElement(parentID);
+                            this.removeToggledItem(parentID);
                         }
                     });
                 });
@@ -87,13 +124,21 @@ export default class Sidebar{
             let subContainer = document.createElement('div');
             subContainer.setAttribute('subContainerID', parentID);
             subContainer.classList.add('c-sidebar__subcontainer');
+            
+            let linkIndex = 0;
             children.forEach( (child) => {
                 const childItem = document.createElement('div');
                 childItem.classList.add('c-sidebar__item');
                 let link = document.createElement('a');
-                link.href = child.href;
+                link.href = "#";
                 link.classList.add('c-sidebar__link');
                 link.text = child.post_title;
+                link.setAttribute('item-active', 'false');
+                link.id = parentID + '-' + linkIndex;
+                linkIndex ++;
+
+                this.addLinkTrigger(link, parentID);
+                
                 childItem.appendChild(link);
                 
                 if(Object.keys(child.children).length > 0) {
@@ -120,26 +165,10 @@ export default class Sidebar{
 
     }
     
-    storeActiveItem(item) {
-        let activeItems = this.getActiveItems();
-        
-        activeItems.items.push(item);
-        localStorage.setItem(this.ACTIVEITEMS, JSON.stringify(activeItems));
-    }
-
-    removeActiveItem(item){
-        let activeItems = this.getActiveItems();
-        const index = activeItems.items.indexOf(item);
-
-        if (index > -1) {
-            activeItems.items.splice(index, 1);
-        }
-
-        localStorage.setItem(this.ACTIVEITEMS, JSON.stringify(activeItems));
-    }
+    
     
     isAlreadyStored(newItem) {
-        let storedItems = this.getActiveItems();
+        let storedItems = this.getItems(this.TOGGLEDITEMS);
         if(storedItems && storedItems.items){
             for(let i = 0; i < storedItems.items.length ; i++){
                 if(storedItems.items[i] === newItem) {
@@ -150,12 +179,32 @@ export default class Sidebar{
         return false;
     }
     
-    getActiveItems() {
-        const activeItems = localStorage.getItem(this.ACTIVEITEMS);
-        return JSON.parse(activeItems);
+    storeItem(item, itemState) {
+        let activeItems = this.getItems(itemState);
+        
+        activeItems.items.push(item);
+        localStorage.setItem(itemState, JSON.stringify(activeItems));
+    }
+    
+    removeToggledItem(item){
+        let activeItems = this.getItems(this.TOGGLEDITEMS);
+        const index = activeItems.items.indexOf(item);
+        
+        if (index > -1) {
+            activeItems.items.splice(index, 1);
+        }
+        
+        localStorage.setItem(this.TOGGLEDITEMS, JSON.stringify(activeItems));
     }
 
-    removeActiveElement(label) {
+    getItems(itemState) {
+        console.log(itemState)
+        const items = localStorage.getItem(itemState);
+        console.log(items)
+        return JSON.parse(items);
+    }
+    
+    removeToggledElement(label) {
         const element = document.querySelector(`[subContainerID='${label}']`);
         if(element){
             element.parentNode.removeChild(element);
