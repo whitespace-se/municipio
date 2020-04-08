@@ -21,7 +21,6 @@ export default class Sidebar{
     }
 
     async loadState() {
-        console.log("LOAD");
         
         const sb = document.getElementsByClassName('c-sidebar')[0];
         this.URL = sb.getAttribute('child-items-url');
@@ -31,12 +30,10 @@ export default class Sidebar{
             const parent = document.querySelector(`[aria-label='${item}']`).parentElement;
             
             parent.appendChild(children)
-            console.log(parent)
             this.toggleAriaPressed(document.querySelector(`[aria-label='${item}']`));
             this.addItemTriggers();
         };
-        console.log('WHAT')
-        this.markActiveTree();
+        this.markLinkAsActive();
     }
 
     toggleAriaPressed(element) {
@@ -52,26 +49,19 @@ export default class Sidebar{
         link.addEventListener('click', (event) => {
             const linkID = link.id;
             
+            this.removeAllStoredItems(this.ACTIVEITEMS);
             this.storeItem(linkID, this.ACTIVEITEMS);
         });
     }
 
-    markActiveTree() {
-        console.log('MARK');
-        const activeLinkID = this.getItems(this.ACTIVEITEMS).items[0];
-        console.log(activeLinkID);
-        let traversing = true;
+    markLinkAsActive() {
+        const activeItems = this.getItems(this.ACTIVEITEMS).items;
 
-        const currentLink = document.getElementById(activeLinkID)
-        const item = currentLink.parentElement;
-        const subContainer = item.parentElement;
-        const parentLink = subContainer.parentElement;
-
-        console.log('currentItem')
-        console.log(currentItem)
-
-        while(traversing) {
+        if(activeItems.length > 0) {
+            const activeLinkID = this.getItems(this.ACTIVEITEMS).items[0];
+            const activeLink = document.getElementById(activeLinkID);
             
+            activeLink.setAttribute(this.ACTIVE, 'true');
         }
     }
 
@@ -86,6 +76,7 @@ export default class Sidebar{
             if(!hasEventAttached){
                 trigger.setAttribute('toggleEvent', 'true');
                 trigger.addEventListener('click', (e) => {
+
                     this.toggleAriaPressed(trigger);
                     
                     const label = e.target.getAttribute('aria-label');
@@ -93,6 +84,7 @@ export default class Sidebar{
                     const parent = document.querySelector(`[aria-label='${parentID}']`).parentElement;
 
                     this.appendChildren(parentID, e.target.parentElement).then((children) => {
+
                         if(!this.isAlreadyStored(parentID)) {
                             parent.appendChild(children);
                             this.storeItem(parentID, this.TOGGLEDITEMS);
@@ -101,6 +93,7 @@ export default class Sidebar{
                             this.removeToggledElement(parentID);
                             this.removeToggledItem(parentID);
                         }
+
                     });
                 });
             } 
@@ -130,7 +123,7 @@ export default class Sidebar{
                 const childItem = document.createElement('div');
                 childItem.classList.add('c-sidebar__item');
                 let link = document.createElement('a');
-                link.href = "#";
+                link.href = child.href;
                 link.classList.add('c-sidebar__link');
                 link.text = child.post_title;
                 link.setAttribute('item-active', 'false');
@@ -180,27 +173,30 @@ export default class Sidebar{
     }
     
     storeItem(item, itemState) {
-        let activeItems = this.getItems(itemState);
+        let items = this.getItems(itemState);
         
-        activeItems.items.push(item);
-        localStorage.setItem(itemState, JSON.stringify(activeItems));
+        items.items.push(item);
+        localStorage.setItem(itemState, JSON.stringify(items));
     }
     
     removeToggledItem(item){
-        let activeItems = this.getItems(this.TOGGLEDITEMS);
-        const index = activeItems.items.indexOf(item);
+        let toggledItems = this.getItems(this.TOGGLEDITEMS);
+        const index = toggledItems.items.indexOf(item);
         
         if (index > -1) {
-            activeItems.items.splice(index, 1);
+            toggledItems.items.splice(index, 1);
         }
         
-        localStorage.setItem(this.TOGGLEDITEMS, JSON.stringify(activeItems));
+        localStorage.setItem(this.TOGGLEDITEMS, JSON.stringify(toggledItems));
+    }
+
+    removeAllStoredItems(itemState) {
+        localStorage.setItem(itemState, JSON.stringify({items: []}));
     }
 
     getItems(itemState) {
-        console.log(itemState)
         const items = localStorage.getItem(itemState);
-        console.log(items)
+
         return JSON.parse(items);
     }
     
