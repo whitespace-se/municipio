@@ -159,7 +159,6 @@ export default class Sidebar{
     }
     
     
-    
     isAlreadyStored(newItem) {
         let storedItems = this.getItems(this.TOGGLEDITEMS);
         if(storedItems && storedItems.items){
