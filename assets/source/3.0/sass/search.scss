@@ -29,3 +29,24 @@
     }
 }
 
+.search-modal{
+    background-color: unset;
+    box-shadow: none;
+    
+    & {
+        .c-field,
+        .c-button {
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .c-field{
+            & input {
+                width:600px;
+            }
+        }
+    }
+
+    
+}
+
