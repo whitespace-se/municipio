@@ -1,16 +1,4 @@
 {{-- SEARCH: Form, Field and button component --}}
-
-@button([
-    'color' => 'default',
-    'style' => 'basic',
-    'icon' => 'search',
-    'size' => 'md',
-    'text' => _x( 'Search', 'label' ),
-    'classList' => ['c-button--show-search'],
-    'attributeList' => ['data-open' => 'm-search-modal__trigger']
-])
-@endbutton
-
 @modal([
     'id' => 'm-search-modal__trigger', 
     'classList' => ['search-modal'], 
