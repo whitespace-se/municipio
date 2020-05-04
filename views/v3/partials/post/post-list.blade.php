@@ -1,47 +1,45 @@
-@typography([
-    'element'=> 'h4',
-    'classList' => ['box-title']
-])
-    {{get_the_archive_title()}}
-@endtypography
 
-<ul>
-    @while(have_posts())
-        {!! the_post() !!}
+<ul class="archive-list">
+
+       @foreach($posts as $post)
+        
         <li>
+            @typography(['variant' => 'h2'])
+                {{$post->postTitle}}
+            @endtypography
 
-            @link([
-                'href' =>  $post->permalink,
-                'classList' => ['grid-xs-6']
-            ])
-                get_the_title()
-            @endlink
+            
+            @typography(['variant' => 'p', 'element' => 'p'])
+                {{$post->postContent}}
+            @endtypography
+            
+            @typography(['variant' => 'meta'])
 
-            @foreach (municipio_post_taxonomies_to_display(get_the_id()) as $taxonomy => $terms)
-                @foreach ($terms as $term)
+                @link([
+                    'href' =>  $post->permalink
+                ])
+                    {{$post->permalink}}
+                @endlink
 
-                    @link([
-                        'href' =>  get_term_link($term, $taxonomy),
-                        'classList' => [
-                            'tag',
-                            'tag-'.$term->taxonomy,
-                            'tag-'.$term->slug]
-                    ])
-                        $term->name
-                    @endlink
-
-                @endforeach
-            @endforeach
+            @endtypography
 
             @if (get_field('archive_' . sanitize_title(get_post_type()) . '_feed_date_published', 'option') != 'false')
-
-                @date([
-                    'action' => 'formatDate',
-                    'timestamp' =>  $post->postDate
-                ])
-                @enddate
+  
+                @typography(['variant' => 'meta'])
+              
+                    @date([
+                        'action' => 'formatDate',
+                        'timestamp' =>  $post->postDate
+                    ])
+                    @enddate
+                    
+                @endtypography
 
             @endif
+            
         </li>
-    @endwhile
+
+        
+       @endforeach
 </ul>
+  

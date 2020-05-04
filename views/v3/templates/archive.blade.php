@@ -33,7 +33,7 @@
 
     @include('partials.archive.archive-title')
 
-    @if (have_posts())
+    @if (!empty($posts))
         <div
             class="archive s-archive s-archive-template-{{sanitize_title($template)}}  s-{{sanitize_title($postType)}}-archive grid"
             @if (apply_filters('archive_equal_container', false, $postType, $template))  @endif>
@@ -42,18 +42,12 @@
                 @includeFirst(["partials.archive.archive-" . sanitize_title($postType) .
                 "-filters", "partials.archive-filters"])
             @endif
-
-
-            <?php $postNum = 0; ?>
-            @grid(['container' => true,"columns" => "auto-fit","min_width" => "300px"])
-                @while(have_posts())
-                    {!! the_post() !!}
-                        @grid([])
-                            @includeIf('partials.post.post-cards', ['post' => $posts[$postNum]])
-                        @endgrid
-                    <?php $postNum++; ?>
-                @endwhile
-            @endgrid
+                        
+            @includeIf('partials.post.post-' . $template, ['posts' => $posts])
+                        
+                    
+                
+            
         </div>
         @pagination(['list' => $paginationList])
         @endpagination
