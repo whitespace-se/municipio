@@ -10,7 +10,7 @@
 
             
             @typography(['variant' => 'p', 'element' => 'p'])
-                {{$post->postContent}}
+                {{$post->excerpt}}
             @endtypography
             
             @typography(['variant' => 'meta'])
@@ -32,7 +32,7 @@
                         'timestamp' =>  $post->postDate
                     ])
                     @enddate
-                    
+
                 @endtypography
 
             @endif

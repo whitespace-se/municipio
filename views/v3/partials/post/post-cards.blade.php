@@ -1,18 +1,17 @@
 
-@grid(['container' => true,"columns" => "auto-fit","min_width" => "300px", 'row_gap' => 3])
+@grid(['container' => true,"columns" => "4","max_width" => "350px", 'row_gap' => 6])
     @foreach($posts as $post)
     
         @card([
                 'href' => $post->permalink,
-                'imageFirst' => false,
-                'image' =>  ['src' => $post->featuredimage, 'alt' => 'featured image'],
+                'imageFirst' => true,
+                'image' =>  ['src' => $post->featuredimage['src'], 'alt' => 'featured image'],
                 'heading' => $post->postTitle,
-                'classList' => ['c-card--shadow-on-hover'],
+                'classList' => ['archive-card'],
                 'byline' => ['text' => $post->postDate, 'position' => 'body'],
-                'content' => $post->postContent,
+                'content' => $post->excerpt,
                 'buttons' => [['text' => 'Go', 'href' => $post->permalink]],
             ])
-
         @endcard
     
     @endforeach

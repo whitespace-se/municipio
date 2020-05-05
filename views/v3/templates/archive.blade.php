@@ -44,12 +44,13 @@
             @endif
                         
             @includeIf('partials.post.post-' . $template, ['posts' => $posts])
-                        
-                    
-                
-            
         </div>
-        @pagination(['list' => $paginationList])
+
+        @pagination([
+            'list' => $paginationList, 
+            'classList' => ['u-margin__top--4'], 
+            'current' => isset($_GET['pagination']) ? $_GET['pagination'] : 1
+        ])
         @endpagination
     @else
         {{-- TODO: add a notice component --}}

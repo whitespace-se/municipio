@@ -16,7 +16,7 @@ class Archive extends \Municipio\Controller\BaseController
         
         $this->data['postType'] = get_post_type();
         $this->data['template'] = !empty(get_field('archive_' . sanitize_title($this->data['postType']) . '_post_style', 'option')) ? get_field('archive_' . sanitize_title($this->data['postType']) . '_post_style', 'option') : 'collapsed';
-        $this->data['paginationList'] = $this->prepareArchivePagination();
+        $this->data['paginationList'] = $this->preparePaginationObject();
 
         
         /*
@@ -42,39 +42,62 @@ class Archive extends \Municipio\Controller\BaseController
 
         */ 
     }
-    private function prepareArchivePagination(){
-        $pages = [];
-        $this->globalToLocal('wp_query', 'wp_query');
-    
-        for($archivePage = 1; $archivePage <= (int)$this->wp_query->max_num_pages; $archivePage++) {
-            $pages[] = array(
-                'label' => $archivePage,
-                'href' => str_replace('https://' . $_SERVER['SERVER_NAME'], '', get_pagenum_link($archivePage))
+    private function preparePaginationObject(){
+        global $wp_query;
+        $pagination = [];
+        $paginationLinks = paginate_links([
+                'type' => 'array', 
+                'prev_next' => false, 
+                'show_all' => true, 
+                'current' => $wp_query->max_num_pages + 1
+        ]);
+
+        for($i = 0; $i < count((array) $paginationLinks); $i++){
+            $anchor = new \SimpleXMLElement($paginationLinks[$i]);
+         
+            $pagination[] = array(
+               'href' => (string) $anchor['href']  . '&pagination=' . (string) ($i + 1),
+               'label' => (string) $i + 1
             );
         }
 
-        return \apply_filters('Municipio/Controller/Archive/prepareArchivePagination', $pages);
+        return \apply_filters('Municipio/Controller/Search/prepareSearchResultObject', $pagination); 
     }
 
     private function getArchivePosts()
     {
-        $preparedPosts = [];
         $this->globalToLocal('posts', 'posts');
+        $preparedPosts = [];
 
         if(is_array($this->posts) && !empty($this->posts)) {
+
             foreach($this->posts as $post) {
                 $post->href = $post->permalink;
-
-                if(get_the_post_thumbnail_url($post->ID)){
-                    $post->featuredImage = \get_the_post_thumbnail_url($post->id);
-                }else{
-                    $post->featuredImage = null;
-                }
+                $post->featuredImage = $this->getFeaturedImage($post);
+                $post->excerpt =  wp_trim_words($post->post_content, 30);
+                $post->hierarchical = 
                 $preparedPosts[] = \Municipio\Helper\Post::preparePostObject($post);
             }
 
             return \apply_filters('Municipio/Controller/Archive/getArchivePosts', $preparedPosts);
         }
+    }
+
+    private function getFeaturedImage($post) 
+    {
+        $featuredImageID = get_post_thumbnail_id();
+        $featuredImageSRC = \get_the_post_thumbnail_url($post->ID);
+        $featuredImageAlt = get_post_meta($featuredImageID, '_wp_attachment_image_alt', TRUE);
+        $featuredImageTitle = get_the_title($featuredImageID);
+
+        $featuredImage = [
+            'src' => $featuredImageSRC ? $featuredImageSRC : null,
+            'alt' => $featuredImageAlt ? $featuredImageAlt : null,
+            'title' => $featuredImageTitle ? $featuredImageTitle : null
+        ];
+
+        return $featuredImage;
+        
     }
 
 

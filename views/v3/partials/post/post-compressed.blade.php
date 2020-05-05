@@ -3,14 +3,9 @@
         @includeIf('partials.article', 
             [
                 'postTitleFiltered' => $post->postTitle, 
-                'postContentFiltered' => $post->postContent, 
+                'postContentFiltered' => $post->excerpt, 
                 'permalink' => $post->permalink,
-                'feature_image' => 
-                (object) [
-                    'src' => $post->featuredimage, 
-                    'alt' => 'ad', 
-                    'title' => 'asd'
-                ]
+                'feature_image' => (object) $post->featuredimage
             ]
         )
     @endforeach

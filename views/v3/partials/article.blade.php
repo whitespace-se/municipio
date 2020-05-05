@@ -18,7 +18,7 @@
 
 	<!-- Content -->
 	@typography([])
-		{{$postContentFiltered}}
+		{!! $postContentFiltered !!}
 	@endtypography	
     
 
@@ -34,8 +34,11 @@
     @endif
 	
 	@if(isset($permalink))
+		
 		@typography(['variant' => 'meta'])
-			{{$permalink}}
+			@link(['href' => $permalink])
+				{{$permalink}}
+			@endlink
 		@endtypography
 	@endif
 
