@@ -13,6 +13,8 @@ class NavigationTree
     protected $currentPostType = [];
     protected $currentNavigationPageForPosttype = [];
     protected $ancestors = null;
+    protected $pageForPostTypeOptions = []; 
+    protected $isPostTypeArchive = null;
 
     protected $topLevelPages = null;
     protected $secondLevelPages = null;
@@ -298,8 +300,18 @@ class NavigationTree
      */
     protected function getCurrentPage()
     {
-        if (is_post_type_archive()) {
-            $pageForPostType = get_option('page_for_' . $this->getPostType());
+
+        //Get cached value
+        if(!is_null($this->isPostTypeArchive)) {
+            $this->isPostTypeArchive = is_post_type_archive(); 
+        }
+
+        if ($this->isPostTypeArchive) {
+            if(array_key_exists($this->pageForPostTypeOptions, 'page_for_' . $this->getPostType())) {
+                $pageForPostType = $this->pageForPostTypeOptions['page_for_' . $this->getPostType()]; 
+            } else {
+                $pageForPostType = $this->pageForPostTypeOptions['page_for_' . $this->getPostType()] = get_option('page_for_' . $this->getPostType()); 
+            }
             return get_post($pageForPostType);
         }
 
