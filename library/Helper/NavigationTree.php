@@ -10,6 +10,8 @@ class NavigationTree
 
     protected $currentPage = null;
     protected $currentNavigation = null;
+    protected $currentPostType = [];
+    protected $currentNavigationPageForPosttype = [];
     protected $ancestors = null;
 
     protected $topLevelPages = null;
@@ -297,7 +299,7 @@ class NavigationTree
     protected function getCurrentPage()
     {
         if (is_post_type_archive()) {
-            $pageForPostType = get_option('page_for_' . get_post_type());
+            $pageForPostType = get_option('page_for_' . $this->getPostType());
             return get_post($pageForPostType);
         }
 
@@ -316,10 +318,11 @@ class NavigationTree
      */
     protected function getCurrentNavigation()
     {
-        if (get_option('page_for_' . get_post_type() . '_navigation')) {
-            return get_post(get_option('page_for_' . get_post_type() . '_navigation'));
+        $slug = 'page_for_' . $this->getPostType() . '_navigation'; 
+        if(array_key_exists($slug, $this->currentNavigationPageForPosttype)) {
+            return $this->currentNavigationPageForPosttype[$slug]; 
         }
-        return;
+        return $this->currentNavigationPageForPosttype[$slug] = get_option($slug); 
     }
 
     /**
@@ -370,7 +373,7 @@ class NavigationTree
 
         return get_posts(array(
             'post_parent' => $parent,
-            'post_type' => get_post_type($parent),
+            'post_type' => $this->getPostType($parent),
             'post_status' => $this->postStatuses,
             'orderby' => 'menu_order post_title',
             'order' => 'asc',
@@ -677,5 +680,23 @@ class NavigationTree
         }
 
         return $page->ID;
+    }
+
+    /**
+     * Get the current postype, with caching functionality.
+     */
+    protected function getPostType($id = PHP_INT_MAX) {
+
+        //Get id
+        if(!is_int($id) && isset($id->ID)) {
+            $id = $id->ID;
+        }
+ 
+        //Check for cache
+        if($this->currentPostType[$id]) {
+            return $this->currentPostType[$id];
+        }
+
+        return $this->currentPostType[$id] = get_post_type(); 
     }
 }
