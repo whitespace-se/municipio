@@ -28,10 +28,45 @@
 
 @stop
 
+
 @section('content')
+    @form([
+        'method' => 'GET',
+        'action' => '?q=form_component'
+    ])
+        @field([
+            'type' => 'text',
+            'value' => $queryParameters->search,
+            'label' => 'Search for '. $postType,
+            'classList' => ['u-margin__top--4', 'u-margin__bottom--4'],
+            'attributeList' => [
+                'type' => 'text',
+                'name' => 's'
+            ],
+            'required' => false,
+            
+        ])
+        @endfield
+    @endform
+
     @includeIf('partials.sidebar', ['id' => 'content-area-top'])
 
     @include('partials.archive.archive-title')
+
+    @foreach($taxonomies as $taxonomy => $terms)
+        
+    
+
+    @splitbutton([
+        'items' => $terms['categories'],
+        'buttonText' => $terms['currentSlug'],
+        'icon' => 'expand_more',
+        'dropdownDirection' => 'down',
+        'classList' => ['u-margin__bottom--4', 'u-margin__right--4']
+    ])
+    @endsplitbutton
+
+    @endforeach
 
     @if (!empty($posts))
         <div

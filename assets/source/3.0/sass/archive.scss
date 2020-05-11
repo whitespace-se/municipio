@@ -1,10 +1,6 @@
 .archive-list{
     list-style: none;
 
-    & li{
-        padding:2%;
-    }
-    
     & li:nth-child(even) { 
         background-color:#f5f5f5;
         

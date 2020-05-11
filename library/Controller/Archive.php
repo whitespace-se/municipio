@@ -12,36 +12,33 @@ class Archive extends \Municipio\Controller\BaseController
 
     public function init()
     {
-        $this->data['posts'] = $this->getArchivePosts();
         
         $this->data['postType'] = get_post_type();
         $this->data['template'] = !empty(get_field('archive_' . sanitize_title($this->data['postType']) . '_post_style', 'option')) ? get_field('archive_' . sanitize_title($this->data['postType']) . '_post_style', 'option') : 'collapsed';
+        $this->data['posts'] = $this->getPosts();
         $this->data['paginationList'] = $this->preparePaginationObject();
-
+        $this->data['queryParameters'] = $this->setQueryParameters();
+        $this->data['taxonomies'] = $this->getTaxonomies(); 
+        $this->data['taxonomyTags'] = $this->getTaxonomyTags();
         
-        /*
-        $postType = get_post_type();
-        if (is_author()) {
-            $postType = 'author';
-            $this->data['hasLeftSidebar'] = true;
-        }
-
-        $this->data['postType'] = $postType;
-        $this->data['template'] = !empty(get_field('archive_' . sanitize_title($postType) . '_post_style', 'option')) ? get_field('archive_' . sanitize_title($postType) . '_post_style', 'option') : 'collapsed';
-        $this->data['grid_size'] = !empty(get_field('archive_' . sanitize_title($postType) . '_grid_columns', 'option')) ? get_field('archive_' . sanitize_title($postType) . '_grid_columns', 'option') : 'grid-md-6';
-
-        $this->data['grid_alter'] = get_field('archive_' . sanitize_title($postType) . '_grid_columns_alter', 'option') ? true : false;
-        $this->data['gridSize'] = (int)str_replace('-', '', filter_var($this->data['grid_size'], FILTER_SANITIZE_NUMBER_INT));
-        self::$gridSize = $this->data['gridSize'];
-
-        if ($this->data['grid_alter']) {
-            $this->gridAlterColumns();
-        }
-
-        add_filter('archive_equal_container', array($this, 'setEqualContainer'), 8, 3);
-
-        */ 
     }
+    
+    private function getTaxonomyTags()
+    {
+
+        parse_str($_SERVER['QUERY_STRING'], $queryParameters);
+        $tags = ['tags' => [], 'beforeLabel' => ''];
+
+        if($queryParameters['filter']) {
+            foreach($queryParameters['filter'] as $filter) {
+                $tags['tags'][] = ['label' => $filter];   
+            }
+            
+            return $tags;
+        }
+        
+    }
+
     private function preparePaginationObject(){
         global $wp_query;
         $pagination = [];
@@ -64,23 +61,98 @@ class Archive extends \Municipio\Controller\BaseController
         return \apply_filters('Municipio/Controller/Search/prepareSearchResultObject', $pagination); 
     }
 
-    private function getArchivePosts()
-    {
-        $this->globalToLocal('posts', 'posts');
-        $preparedPosts = [];
 
+    private function setQueryParameters() 
+    {
+        $queryParameters = [
+            'search' =>  isset($_GET['s']) ? $_GET['s'] : '',
+            'from' =>  isset($_GET['from']) ? $_GET['from'] : '',
+            'to' =>  isset($_GET['to']) ? $_GET['to'] : ''
+        ];
+
+        return \apply_filters('Municipio/Controller/Archive/setQueryParameters', 
+                (object) $queryParameters);
+    }
+
+    private function getTaxonomies() 
+    {
+       
+        $taxonomies = get_object_taxonomies($this->data['postType']);
+        
+        $taxonomiesList = [];
+        
+        foreach($taxonomies as $taxonomy){
+            $text = str_replace('-',' ',$taxonomy);
+            $terms = get_terms( array(
+                'taxonomy' => $taxonomy,
+                'hide_empty' => false,
+                ) );
+            $currentTerm = get_term_by('slug', $_GET['filter'][$taxonomy], $taxonomy);
+            //die(var_dump($currentTerm));
+            $taxonomiesList[$text]['currentSlug'] = $currentTerm ? $currentTerm->name : $taxonomy;
+
+            foreach($terms as $term){
+                $taxonomiesList[$text]['categories'][] = ['text' => $term->name, 'link' => "filter[{$taxonomy}]={$term->slug}"];
+            }
+            
+        }
+
+        return \apply_filters('Municipio/Controller/Archive/getTaxonomies', $taxonomiesList);
+    }
+
+    private function getPosts()
+    {        
+        
+        $this->globalToLocal('posts', 'posts');
+        
+        $template = $this->data['template'];
+        $items    = null;
         if(is_array($this->posts) && !empty($this->posts)) {
 
-            foreach($this->posts as $post) {
-                $post->href = $post->permalink;
-                $post->featuredImage = $this->getFeaturedImage($post);
-                $post->excerpt =  wp_trim_words($post->post_content, 30);
-                $post->hierarchical = 
-                $preparedPosts[] = \Municipio\Helper\Post::preparePostObject($post);
+            if ($template == 'list') {
+                $items = $this->getListItems($this->posts);
+            } elseif ($template == 'cards') {
+                $items = $this->getCardItems($this->posts);
+            } elseif ($template == 'compressed') {
+                $items = $this->getCompressedItems($this->posts);
             }
 
-            return \apply_filters('Municipio/Controller/Archive/getArchivePosts', $preparedPosts);
+            return \apply_filters('Municipio/Controller/Archive/getArchivePosts', $items);
         }
+        
+    }
+
+    private function getCardItems($posts)
+    {
+        $preparedPosts = [];
+
+        foreach($posts as $post) {
+            $post->href = $post->permalink;
+            $post->featuredImage = $this->getFeaturedImage($post);
+            $post->excerpt =  wp_trim_words($post->post_content, 15);
+            $preparedPosts[] = \Municipio\Helper\Post::preparePostObject($post);
+        }
+        
+        return $preparedPosts;
+    }
+
+    private function getListItems($posts)
+    {
+        
+        $preparedPosts = [
+            'items' => [],
+            'headings' => ['Title', 'Published', 'Updated']
+        ];
+
+        foreach($posts as $post) {
+            $preparedPosts['items'][] = [
+                $post->post_title,
+                $post->post_date,
+                $post->post_modified
+            ];
+        }
+        
+        return $preparedPosts;
     }
 
     private function getFeaturedImage($post) 

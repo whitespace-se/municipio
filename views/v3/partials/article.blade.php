@@ -1,7 +1,7 @@
 <article id="article" class="c-article s-article">
 
     <!-- Feature Image -->
-    @if ($feature_image->src)
+    @if (isset($feature_image->src))
     @image([
         'src'=> $feature_image->src,
         'alt' => $feature_image->alt,
