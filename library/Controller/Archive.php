@@ -29,7 +29,7 @@ class Archive extends \Municipio\Controller\BaseController
         parse_str($_SERVER['QUERY_STRING'], $queryParameters);
         $tags = ['tags' => [], 'beforeLabel' => ''];
 
-        if($queryParameters['filter']) {
+        if(isset($queryParameters['filter'])) {
             foreach($queryParameters['filter'] as $filter) {
                 $tags['tags'][] = ['label' => $filter];   
             }
@@ -48,16 +48,16 @@ class Archive extends \Municipio\Controller\BaseController
                 'show_all' => true, 
                 'current' => $wp_query->max_num_pages + 1
         ]);
-
         for($i = 0; $i < count((array) $paginationLinks); $i++){
             $anchor = new \SimpleXMLElement($paginationLinks[$i]);
-         
+            var_dump($anchor);
             $pagination[] = array(
-               'href' => (string) $anchor['href']  . '&pagination=' . (string) ($i + 1),
-               'label' => (string) $i + 1
+                'href' => (string) $anchor['href'],
+                'label' => (string) $i + 1
             );
         }
-
+        
+        //die();
         return \apply_filters('Municipio/Controller/Search/prepareSearchResultObject', $pagination); 
     }
 
@@ -83,13 +83,18 @@ class Archive extends \Municipio\Controller\BaseController
         
         foreach($taxonomies as $taxonomy){
             $text = str_replace('-',' ',$taxonomy);
+            $currentTerm = null;
             $terms = get_terms( array(
                 'taxonomy' => $taxonomy,
                 'hide_empty' => false,
                 ) );
-            $currentTerm = get_term_by('slug', $_GET['filter'][$taxonomy], $taxonomy);
-            //die(var_dump($currentTerm));
-            $taxonomiesList[$text]['currentSlug'] = $currentTerm ? $currentTerm->name : $taxonomy;
+            if(isset($_GET['filter'][$taxonomy])){
+                $currentTerm = get_term_by('slug', $_GET['filter'][$taxonomy], $taxonomy);
+            }
+            
+            $taxonomiesList[$text]['currentSlug'] = (isset($currentTerm)) ? $currentTerm->name : $text;
+            $taxonomiesList[$text]['categories'][] = ['text' => $taxonomy, 'link' => "filter[{$taxonomy}]=delete"];
+
 
             foreach($terms as $term){
                 $taxonomiesList[$text]['categories'][] = ['text' => $term->name, 'link' => "filter[{$taxonomy}]={$term->slug}"];

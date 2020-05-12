@@ -81,6 +81,8 @@
             @includeIf('partials.post.post-' . $template, ['posts' => $posts])
         </div>
 
+        {{-- {{die(print("<pre>".print_r($paginationList,true)."</pre>"))}} --}}
+
         @pagination([
             'list' => $paginationList, 
             'classList' => ['u-margin__top--4'], 
