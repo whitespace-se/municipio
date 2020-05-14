@@ -29,14 +29,15 @@ class NavigationTree
 
     protected $isAjaxParent = false;
 
-    private $frontPageIdCache = null; 
+    private $frontPageIdCache = null;
+    private static $runtimeCache = null;
 
     public function __construct($args = array(), $parent = false)
     {
         $this->currentNavigation = $this->getCurrentNavigation();
 
         if ($parent) {
-            $parent = get_post($parent);
+            $parent = $this->getPost($parent);
             $this->isAjaxParent = true;
         }
 
@@ -217,7 +218,7 @@ class NavigationTree
             $output = true;
 
             if (is_numeric($page)) {
-                $page = get_post($page);
+                $page = $this->getPost($page);
             }
 
             if ($this->isAncestors($pageId)) {
@@ -263,10 +264,11 @@ class NavigationTree
             $hasChildren = true;
             $attributes['class'][] = 'has-children';
             $attributes['class'][] = 'has-sub-menu';
+
         }
 
         if(is_null($this->frontPageIdCache)) {
-            $this->frontPageIdCache = get_option('page_on_front'); 
+            $this->frontPageIdCache = $this->getOption('page_on_front'); 
         }
 
         if($pageId == $this->frontPageIdCache) {
@@ -302,17 +304,17 @@ class NavigationTree
     {
 
         //Get cached value
-        if(!is_null($this->isPostTypeArchive)) {
+        if(!isset($this->isPostTypeArchive)) {
             $this->isPostTypeArchive = is_post_type_archive(); 
         }
 
         if ($this->isPostTypeArchive) {
-            if(array_key_exists($this->pageForPostTypeOptions, 'page_for_' . $this->getPostType())) {
+            if(array_key_exists('page_for_' . $this->getPostType(), $this->pageForPostTypeOptions)) {
                 $pageForPostType = $this->pageForPostTypeOptions['page_for_' . $this->getPostType()]; 
             } else {
-                $pageForPostType = $this->pageForPostTypeOptions['page_for_' . $this->getPostType()] = get_option('page_for_' . $this->getPostType()); 
+                $pageForPostType = $this->pageForPostTypeOptions['page_for_' . $this->getPostType()] = $this->getOption('page_for_' . $this->getPostType()); 
             }
-            return get_post($pageForPostType);
+            return $this->getPost($pageForPostType);
         }
 
         global $post;
@@ -334,7 +336,7 @@ class NavigationTree
         if(array_key_exists($slug, $this->currentNavigationPageForPosttype)) {
             return $this->currentNavigationPageForPosttype[$slug]; 
         }
-        return $this->currentNavigationPageForPosttype[$slug] = get_option($slug); 
+        return $this->currentNavigationPageForPosttype[$slug] = $this->getOption($slug); 
     }
 
     /**
@@ -349,7 +351,7 @@ class NavigationTree
         if ($key && is_post_type_hierarchical($key)) {
             $inMenu = false;
 
-            foreach (get_field('avabile_dynamic_post_types', 'options') as $type) {
+            foreach ($this->getField('avabile_dynamic_post_types', 'options') as $type) {
                 if (sanitize_title(substr($type['post_type_name'], 0, 19)) !== $key) {
                     continue;
                 }
@@ -422,9 +424,9 @@ class NavigationTree
             }
 
             if ('post' === $postType->name) {
-                $pageId = get_option('page_for_posts');
+                $pageId = $this->getOption('page_for_posts');
             } else {
-                $pageId = get_option("page_for_{$postType->name}");
+                $pageId = $this->getOption("page_for_{$postType->name}");
             }
 
             if (!$pageId) {
@@ -510,8 +512,8 @@ class NavigationTree
             $title = $item->title;
         }
 
-        if (!empty(get_field('custom_menu_title', $objId))) {
-            $title = get_field('custom_menu_title', $objId);
+        if (!empty($this->getField('custom_menu_title', $objId))) {
+            $title = $this->getField('custom_menu_title', $objId);
         }
 
         $href = get_permalink($objId);
@@ -637,7 +639,7 @@ class NavigationTree
         }
 
         $pageId = $this->getPageId($item);
-        $showInMenu = get_field('hide_in_menu', $pageId) ? !get_field('hide_in_menu', $pageId) : true;
+        $showInMenu = $this->getField('hide_in_menu', $pageId) ? !$this->getField('hide_in_menu', $pageId) : true;
         $isNotTopLevelItem = !($item->post_type === 'page' && isset($item->post_parent) && $item->post_parent === 0);
         $showTopLevel = $this->args['include_top_level'];
 
@@ -684,7 +686,7 @@ class NavigationTree
         }
 
         if (!is_object($page)) {
-            $page = get_post($page);
+            $page = $this->getPost($page);
         }
 
         if (isset($page->post_type) && $page->post_type == 'nav_menu_item') {
@@ -695,20 +697,68 @@ class NavigationTree
     }
 
     /**
-     * Get the current postype, with caching functionality.
+     * Gets field value from cache if exists else gets post via WP func
+     * @param string $field Name of field
+     * @param int $objectId Object which field to get
+     * @return mixed Field data
      */
-    protected function getPostType($id = PHP_INT_MAX) {
-
-        //Get id
-        if(!is_int($id) && isset($id->ID)) {
-            $id = $id->ID;
-        }
- 
-        //Check for cache
-        if($this->currentPostType[$id]) {
-            return $this->currentPostType[$id];
+    public function getField($field, $objectId)
+    {
+        if (isset(self::$runtimeCache['fields'][$field][$objectId])) {
+            return self::$runtimeCache['fields'][$field][$objectId];
         }
 
-        return $this->currentPostType[$id] = get_post_type(); 
+        $query = is_int($objectId) ?
+            get_post_meta($objectId, $field, true) :
+                get_field($field, $objectId);
+
+        return self::$runtimeCache['fields'][$field][$objectId] = $query;
+    }
+
+    /**
+     * Gets option from cache if exists else gets post via WP func
+     * @param string $option Name of option
+     * @param mixed $default What to return if option doesn't exist
+     * @return mixed Option data
+     */
+    public function getOption($option, $default = false)
+    {
+        if (isset(self::$runtimeCache['options'][$option])) {
+            return self::$runtimeCache['options'][$option];
+        }
+
+        return self::$runtimeCache['options'][$option] = get_option($option, $default);
+    }
+
+    /**
+     * Gets post type from cache if exists else gets post via WP func
+     * @param mixed $post WP_Post object or post ID
+     * @return string Post type
+     */
+    public function getPostType($post = 'post')
+    {
+        $postId = !is_object($post) ? $post : $postId = $post->ID;
+
+        if (isset(self::$runtimeCache['post_type'][$postId])) {
+            return self::$runtimeCache['post_type'][$postId];
+        }
+
+        return self::$runtimeCache['post_type'][$postId] = get_post_type($post === 'post' ? null : $post);
+    }
+
+    /**
+     * Gets post from cache if exists else gets post via WP func
+     * @param mixed $post WP_Post object or post ID
+     * @return object WP_Post
+     */
+    public function getPost($post = 'post')
+    {
+        $arrKey = !is_object($post) ? $post : $post->ID;
+
+        if (isset(self::$runtimeCache['posts'][$arrKey])) {
+            return self::$runtimeCache['posts'][$arrKey];
+        }
+
+        return self::$runtimeCache['posts'][$arrKey] = get_post($post === 'post' ? null : $arrKey);
     }
 }
