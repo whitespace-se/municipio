@@ -30,7 +30,7 @@ class NavigationTree
     protected $isAjaxParent = false;
 
     private $frontPageIdCache = null;
-    private static $runtimeCache = null;
+    private static $runtimeCache = [];
 
     public function __construct($args = array(), $parent = false)
     {
@@ -704,7 +704,15 @@ class NavigationTree
      */
     public function getField($field, $objectId)
     {
-        if (isset(self::$runtimeCache['fields'][$field][$objectId])) {
+        if(!array_key_exists('fields',self::$runtimeCache)) {
+            self::$runtimeCache['fields'] = [];
+        }
+
+        if(!array_key_exists($field, self::$runtimeCache['fields'])) {
+            self::$runtimeCache['fields'][$field] = [];
+        }
+
+        if (array_key_exists($objectId, self::$runtimeCache['fields'][$field])) {
             return self::$runtimeCache['fields'][$field][$objectId];
         }
 
@@ -723,7 +731,11 @@ class NavigationTree
      */
     public function getOption($option, $default = false)
     {
-        if (isset(self::$runtimeCache['options'][$option])) {
+        if(!array_key_exists('options',self::$runtimeCache)) {
+            self::$runtimeCache['options'] = [];
+        }
+
+        if (array_key_exists($option, self::$runtimeCache['options'])) {
             return self::$runtimeCache['options'][$option];
         }
 
@@ -739,7 +751,11 @@ class NavigationTree
     {
         $postId = !is_object($post) ? $post : $postId = $post->ID;
 
-        if (isset(self::$runtimeCache['post_type'][$postId])) {
+        if(!array_key_exists('post_type',self::$runtimeCache)) {
+            self::$runtimeCache['post_type'] = [];
+        }
+
+        if (array_key_exists($postId, self::$runtimeCache['post_type'])) {
             return self::$runtimeCache['post_type'][$postId];
         }
 
@@ -753,9 +769,13 @@ class NavigationTree
      */
     public function getPost($post = 'post')
     {
+        if(!array_key_exists('posts',self::$runtimeCache)) {
+            self::$runtimeCache['posts'] = [];
+        }
+
         $arrKey = !is_object($post) ? $post : $post->ID;
 
-        if (isset(self::$runtimeCache['posts'][$arrKey])) {
+        if (array_key_exists($arrKey, self::$runtimeCache['posts'])) {
             return self::$runtimeCache['posts'][$arrKey];
         }
 
