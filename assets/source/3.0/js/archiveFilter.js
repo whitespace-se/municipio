@@ -28,8 +28,11 @@ export default class ArchiveFilter{
                     }else{
                         searchParams.append(filterKey, filterValue);
                     }
-                    
-                    window.location.search = searchParams.toString();
+                    /* page\/.+?(?=) */
+
+                    const pathName = location.pathname.replace(/page\/.+?(?=)/, 'page/1');
+                    searchParams.set('pagination', 1);
+                    window.location.href =  pathName + '?' + searchParams.toString();
                     event.preventDefault();
                 })
             });
