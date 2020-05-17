@@ -399,6 +399,8 @@ class PostFilters
             
             $query->set('tax_query', $taxQuery);
             
+            /* die(print("<pre>".print_r($taxQuery,true)."</pre>")); */
+            
             return $query;
         }
         

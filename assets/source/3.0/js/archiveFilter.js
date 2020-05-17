@@ -2,6 +2,7 @@ export default class ArchiveFilter{
 
     constructor(){
         this.addListenerToItems();
+        this.openOnPageLoad();
     }
 
     addListenerToItems() {
@@ -20,7 +21,6 @@ export default class ArchiveFilter{
                     const filterValue = filterParts[1];
                
                     if(filterValue === 'delete') {
-                        
                         searchParams.delete(filterKey);
                     }
                     else if(searchParams.get(filterKey)) {
@@ -28,7 +28,6 @@ export default class ArchiveFilter{
                     }else{
                         searchParams.append(filterKey, filterValue);
                     }
-                    /* page\/.+?(?=) */
 
                     const pathName = location.pathname.replace(/page\/.+?(?=)/, 'page/1');
                     searchParams.set('pagination', 1);
@@ -37,6 +36,19 @@ export default class ArchiveFilter{
                 })
             });
         });
+    }
+
+    openOnPageLoad() {
+        //const dateFrom = document.querySelector('[js-archive-filter-from=""]');
+        let dateTo = document.querySelector('[js-archive-filter-to=""]');
+
+        console.log(dateTo);
+        dateTo.addEventListener('change', function(event) {
+            console.log("YES")
+            
+        });
+        
+        console.log("Hey")
     }
 
 }
