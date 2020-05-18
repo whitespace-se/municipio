@@ -1,33 +1,48 @@
 .search-result-item{
-    width:800 px;
-    &__title-link,
-    &__title-link:visited,
-    &__title-link:hover,
-    &__title-link:active{
+    /* Auto Layout */
+
+    
+    padding: 16px 0px;
+    color: #565656;
+    
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 150%;
+    /* or 21px */
+
+    letter-spacing: 0.0025em;
+
+    /* Mono / Mörkare */
+
+    color: #565656;
+
+  
+
+    &__title-link{
         text-decoration: none;
-       
+        color:#AE0B05;
     }
 
-    & .c-typography__variant--meta{
-        display:flex;
-        align-items: center;
-        & .c-icon{
-            margin-right: 12px;
-        }
+    &__title-link:visisted{
+        color:#AE0B05;
     }
-    &__content-container{
-        
-    }
-    & img{
-        
-        width:100px;
-        height: 100px;
-        float:left;
-        margin-right: 10px;
-        margin-bottom: 10px;
 
+    &__title-link:hover{
+        color:#AE0B05;
     }
+
+    &__link-prefix{
+        font-weight: 700;
+    }
+
+    &__parent-title-link:visisted{
+        color:#AE0B05;
+    }
+
+   
 }
+
 
 .search-modal{
     background-color: unset;

@@ -92,19 +92,40 @@ class Search extends \Municipio\Controller\BaseController
         /* die(print_r($posts)); */
         foreach($posts as $post){
             //$excerpt = get_the_excerpt($post->ID);
-
+            
             $searchResult[] = array(
                 'author' => get_the_author_meta( 'display_name', $post->post_author ),
                 'date' =>  $post->post_date,
                 'title' => $post->post_title,
                 'permalink' => get_permalink( $post->ID),
                 'excerpt' => wp_trim_words($post->post_content),
-                'featuredImage' => get_the_post_thumbnail_url($post->ID)
+                'featuredImage' => get_the_post_thumbnail_url($post->ID),
+                'postParent' => $this->getParentPost($post->ID),
+                'topMostPostParent' => $this->getTopMostParentPost($post)
             );
         }
-
         return \apply_filters('Municipio/Controller/Search/prepareSearchResultObject', $searchResult);
-
+        
+    }
+    
+    private function getParentPost($postID) 
+    {
+        $parentPostID = wp_get_post_parent_id( $postID );
+        $parentPost = get_post($parentPostID);
+        //die(var_dump($parentPost));
+        return $parentPost;
+    }
+    
+    private function getTopMostParentPost($post){
+        if ( 0 == $post->post_parent ) {
+            return the_title();
+        } else {
+            $parents = get_post_ancestors( $post->ID );
+            $parentID = end ( $parents );
+            $parent = get_post($parentID);
+            $parent->href = get_permalink($parentID);
+            return apply_filters( "Municipio/Controller/Search/getTopMostParentPost", $parent);
+        }
     }
 
     /**
