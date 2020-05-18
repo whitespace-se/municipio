@@ -12,16 +12,10 @@
         overflow-wrap: anywhere;
         hyphens: auto;
     }
-    & article:nth-child(even) {
-        background-color:#f5f5f5;
-    }
 
-    & img{
-        
-        width:100px;
-        height: 100px;
-       
-
+    & img{  
+        height: 500px;
+        object-fit: cover;
     }
 }
 
@@ -29,3 +23,4 @@
     overflow-wrap: break-word;
     max-width: 280px;
 }
+

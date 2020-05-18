@@ -34,77 +34,77 @@
         @endgrid
     @endform
         
-    <div class="u-visiblity--hidden" js-toggle-item="filterDiv" js-toggle-class="u-visibility--hidden">
-    @grid(['container' => true, 'columns' => "2", 'col_gap' => '4'])
-    @grid([])
+    <div class="u-display--none" js-toggle-item="filterDiv" js-toggle-class="u-display--none">
+        @grid(['container' => true, 'columns' => "2", 'col_gap' => '4'])
+            @grid([])
+                @field([
+                    'type' => 'datepicker',
+                    'value' => '',
+                    'label' => 'Enter a date',
+                    'attributeList' => [
+                        'type' => 'text',
+                        'name' => 'text',
+                        'data-invalid-message' => "You need to add a valid date!",
+                        'js-archive-filter-from'
+                    ],
+                    'required' => true,
+                    'datepicker' => [
+                        'title'                 => 'Välj ett datum',
+                        'minDate'               => "6/29/1997",
+                        'maxDate'               => "tomorrow",
+                        'required'              => true,
+                        'showResetButton'       => true,
+                        'showDaysOutOfMonth'    => true,
+                        'showClearButton'       => true,
+                        'hideOnBlur'            => true,
+                        'hideOnSelect'          => false,
+                    ]
+                ])
+                @endfield
+            @endgrid
 
-    @field([
-        'type' => 'datepicker',
-        'value' => '',
-        'label' => 'Enter a date',
-        'attributeList' => [
-            'type' => 'text',
-            'name' => 'text',
-            'data-invalid-message' => "You need to add a valid date!",
-            'js-archive-filter-from'
-        ],
-        'required' => true,
-        'datepicker' => [
-            'title'                 => 'Välj ett datum',
-            'minDate'               => "6/29/1997",
-            'maxDate'               => "tomorrow",
-            'required'              => true,
-            'showResetButton'       => true,
-            'showDaysOutOfMonth'    => true,
-            'showClearButton'       => true,
-            'hideOnBlur'            => true,
-            'hideOnSelect'          => false,
-        ]
-    ])
-    @endfield
-    @endgrid
-    @grid([])
-    @field([
-        'type' => 'datepicker',
-        'value' => '',
-        'label' => 'Enter a date',
-        'attributeList' => [
-            'type' => 'text',
-            'name' => 'text',
-            'data-invalid-message' => "You need to add a valid date!",
-            'js-archive-filter-to' => ''
-        ],
-        'required' => true,
-        'datepicker' => [
-            'title'                 => 'Välj ett datum',
-            'minDate'               => "6/29/1997",
-            'maxDate'               => "tomorrow",
-            'required'              => true,
-            'showResetButton'       => true,
-            'showDaysOutOfMonth'    => true,
-            'showClearButton'       => true,
-            'hideOnBlur'            => true,
-            'hideOnSelect'          => false,
-            ]
-            ])
-    @endfield
-    @endgrid
-    @endgrid
-
-    @grid(['container' => true, 'columns' => 'auto-fit', 'col_gap' => 2])
-    @foreach($taxonomies as $taxonomy => $terms)
-        
-        @grid([])
-        @splitbutton([
-            'items' => $terms['categories'],
-            'buttonText' => $terms['currentSlug'],
-            'icon' => 'expand_more',
-            'dropdownDirection' => 'down',
-            'classList' => ['u-margin__bottom--4', 'u-margin__right--4']
-        ])
-        @endsplitbutton
+            @grid([])
+                @field([
+                    'type' => 'datepicker',
+                    'value' => '',
+                    'label' => 'Enter a date',
+                    'attributeList' => [
+                        'type' => 'text',
+                        'name' => 'text',
+                        'data-invalid-message' => "You need to add a valid date!",
+                        'js-archive-filter-to' => ''
+                    ],
+                    'required' => true,
+                    'datepicker' => [
+                        'title'                 => 'Välj ett datum',
+                        'minDate'               => "6/29/1997",
+                        'maxDate'               => "tomorrow",
+                        'required'              => true,
+                        'showResetButton'       => true,
+                        'showDaysOutOfMonth'    => true,
+                        'showClearButton'       => true,
+                        'hideOnBlur'            => true,
+                        'hideOnSelect'          => false,
+                        ]
+                        ])
+                @endfield
+            @endgrid
         @endgrid
 
-    @endforeach
-    @endgrid
+        @grid(['container' => true, 'columns' => 'auto-fit', 'col_gap' => 2])
+        @foreach($taxonomies as $taxonomy => $terms)
+            
+            @grid([])
+            @splitbutton([
+                'items' => $terms['categories'],
+                'buttonText' => $terms['currentSlug'],
+                'icon' => 'expand_more',
+                'dropdownDirection' => 'down',
+                'classList' => ['u-margin__bottom--4', 'u-margin__right--4']
+            ])
+            @endsplitbutton
+            @endgrid
+
+        @endforeach
+        @endgrid
     </div>

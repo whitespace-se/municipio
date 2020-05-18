@@ -3,6 +3,7 @@ export default class ArchiveFilter{
     constructor(){
         this.addListenerToItems();
         this.openOnPageLoad();
+        this.showFilterDiv();
     }
 
     addListenerToItems() {
@@ -38,17 +39,45 @@ export default class ArchiveFilter{
         });
     }
 
-    openOnPageLoad() {
-        //const dateFrom = document.querySelector('[js-archive-filter-from=""]');
-        let dateTo = document.querySelector('[js-archive-filter-to=""]');
+    showFilterDiv() {
 
-        console.log(dateTo);
+        const toggleFilterDivButton = document.querySelector('[js-toggle-trigger="filterDiv"]');
+        const filterDiv = document.querySelector('[js-toggle-item="filterDiv"]');
+        const isPressed = toggleFilterDivButton.getAttribute('aria-pressed');
+
+        if(localStorage.getItem('showFilterDiv') === 'true') {
+            filterDiv.classList.toggle('u-display--none');
+            toggleFilterDivButton.setAttribute('aria-pressed', 'true');
+        }else {
+            toggleFilterDivButton.setAttribute('aria-pressed', 'false');
+        }
+        
+        if(isPressed !== 'true'){
+            
+        }else {
+            
+        }
+
+        toggleFilterDivButton.addEventListener('click', (event) => {
+            
+            if(isPressed !== 'true'){
+                localStorage.setItem('showFilterDiv', 'true');
+                toggleFilterDivButton.setAttribute('aria-pressed', 'false');
+            }else {
+                localStorage.setItem('showFilterDiv', 'false');
+                toggleFilterDivButton.setAttribute('aria-pressed', 'true');
+            }
+        });
+    }
+
+    openOnPageLoad() {
+
+        const dateTo = document.querySelector('[js-archive-filter-to=""]');
+
         dateTo.addEventListener('change', function(event) {
-            console.log("YES")
             
         });
         
-        console.log("Hey")
     }
 
 }

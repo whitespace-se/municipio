@@ -27,47 +27,22 @@ class Archive extends \Municipio\Controller\BaseController
     private function preparePaginationObject(){
         global $wp_query;
         $pagination = [];
-        $paginationLinks = paginate_links([
-                'type' => 'array', 
-                'prev_next' => false, 
-                'show_all' => true, 
-                'current' => $wp_query->max_num_pages + 1
-        ]);
-
         $numberOfPages = $wp_query->max_num_pages + 1;
         $archiveUrl = get_post_type_archive_link($this->data['postType']);
         $href = '';
         $currentPage = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
         if($numberOfPages > 1){
             for($i = 1; $i < $numberOfPages; $i++){
 
                 $href = $archiveUrl . 'page/' . $i . '?' . $this->setQueryString($i);
-               var_dump($numberOfPages);
-                /* $anchor = new \SimpleXMLElement($paginationLinks[$i]);
-                var_dump($anchor['href']);
-                $href = '';
-                $paginationNumberString = (string)($i + 1);
-    
-                
-                if(strpos($anchor['href'], '?pagination=')) {
-                    $href = \preg_replace('/\?pagination=(.*)/', '?pagination=' . $paginationNumberString, (string)$anchor['href']);
-                }else {
-                    $href = $anchor['href'] . '?pagination=' . $paginationNumberString;
-                } */
-                
-    
-                //die(var_dump($queryArgList));
     
                 $pagination[] = array(
                     'href' => $href,
                     'label' => (string) $i
                 );
             }
-
-            //die(print("<pre>".print_r($pagination,true)."</pre>"));
         }
-        
-        
         
         return \apply_filters('Municipio/Controller/Search/prepareSearchResultObject', $pagination); 
     }
@@ -137,7 +112,7 @@ class Archive extends \Municipio\Controller\BaseController
             } elseif ($template == 'cards') {
                 $items = $this->getCardItems($this->posts);
             } elseif ($template == 'compressed') {
-                $items = $this->getCompressedItems($this->posts);
+                $items = $this->getCardItems($this->posts);
             }
 
             return \apply_filters('Municipio/Controller/Archive/getArchivePosts', $items);
@@ -168,13 +143,17 @@ class Archive extends \Municipio\Controller\BaseController
         ];
 
         foreach($posts as $post) {
+            $postDate = \date('Y-m-d', strtotime($post->post_date));
+            $postModified = \date('Y-m-d', strtotime($post->post_modified));
+
+
             $preparedPosts['items'][] = 
             [
                 'href' => get_permalink($post->ID),
                 'columns' => [
                     $post->post_title,
-                    $post->post_date,
-                    $post->post_modified
+                    $post->post_date = $postDate,
+                    $post->post_modified = $postModified
                 ]
                 
             ];
