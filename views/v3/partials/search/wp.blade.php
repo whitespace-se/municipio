@@ -4,7 +4,8 @@
 
     @form([
         'method' => 'get',
-        'action' => esc_url( home_url( '/' ) )
+        'action' => esc_url( home_url( '/' ) ),
+        'classList' => ['u-margin__bottom--4']
     ])
 
 
@@ -20,21 +21,11 @@
     ])
     @endfield
 
-    @button([
-        'type' => 'filled',
-        'icon' => 'search',
-        'size' => 'md',
-        'color' => 'secondary',
-        'attributeList' => [
-            'type' => 'submit'
-        ]
-    ])
-    @endbutton
-
     @endform
 
-     <strong>{{ $resultCount }}</strong> träffar på <strong>"{{ get_search_query() }}"</strong> inom {{ ucfirst(explode('//', home_url(), 2)[1]) }}
-
+    @typography(['variant' => 'h2', 'element' => 'h2'])
+     Found {{ $resultCount }} hits 
+    @endtypography
 
 </section>
 

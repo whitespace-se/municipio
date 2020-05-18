@@ -1,14 +1,30 @@
+<div class="search-result-item u-margin__bottom--4">
+    @typography(['variant' => 'h4', 'element' => 'h4'])
+        @link([
+            'href' => $result['topMostPostParent']->href,
+            'classList' => ['search-result-item__parent-title-link']
+        ])
+            {{$result['topMostPostParent']->post_title}}
+        @endlink
+        
+          
+    @endtypography
 
-
-@paper(['classList' => ['search-result-item', 'u-padding--2', 'u-margin__bottom--1']])
-    @typography(['variant' => 'h2', 'element' => 'h2'])
+    @typography(['variant' => 'h3', 'element' => 'h3'])
+        @link([
+            'href' => $result['permalink'],
+            'classList' => ['search-result-item__parent-title-link']
+        ])
+            {{$result['postParent']->post_title}}
+        @endlink
+        /
         @link([
             'href' => $result['permalink'],
             'classList' => ['search-result-item__title-link']
         ])
             {{$result['title']}}
         @endlink
-        
+          
     @endtypography
  
     <p style="display: inline-block;">
@@ -18,19 +34,12 @@
         {{$result['excerpt']}}
     </p>
 
-    <div class="g-divider g-divider--lg"></div>
 
-    @typography(['variant' => 'meta'])
-        @icon(['icon' => 'date_range', 'size' => 'md'])
-        @endicon
-        
-        <span class="">{{$result['date']}}</span>
-    @endtypography
 
-    @typography(['variant' => 'meta'])
-        @icon(['icon' => 'link', 'size' => 'md'])
-        @endicon
-
+    @typography(['variant' => 'caption'])
+        <span class="search-result-item__link-prefix"> 
+            Link: 
+        </span>
         @link([
             'href' => $result['permalink']
         ])
@@ -38,7 +47,7 @@
         @endlink
 
     @endtypography
-@endpaper    
+</div>
 
 
 
