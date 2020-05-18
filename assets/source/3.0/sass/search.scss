@@ -1,7 +1,6 @@
 .search-result-item{
     /* Auto Layout */
 
-    
     padding: 16px 0px;
     color: #565656;
     
@@ -18,31 +17,29 @@
     color: #565656;
 
   
-
-    &__title-link{
+    
+    &__title-link, &__title-link:link, &__title-link:visited, &__title-link:visited:hover {
         text-decoration: none;
         color:#AE0B05;
     }
 
-    &__title-link:visisted{
-        color:#AE0B05;
+    &__parent-title-link, &__parent-title-link:link, &__parent-title-link:visited, &__parent-title-link:visited:hover {
+        text-decoration: none;
+        color:#3D3D3D;
     }
 
-    &__title-link:hover{
-        color:#AE0B05;
-    }
 
     &__link-prefix{
         font-weight: 700;
-    }
 
-    &__parent-title-link:visisted{
-        color:#AE0B05;
     }
-
    
 }
 
+.search-result-count{
+    border-bottom: 1px solid #E5E5E5;
+    max-width: max-content;
+}
 
 .search-modal{
     background-color: unset;

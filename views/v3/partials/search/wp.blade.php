@@ -23,9 +23,11 @@
 
     @endform
 
-    @typography(['variant' => 'h2', 'element' => 'h2'])
-     Found {{ $resultCount }} hits 
-    @endtypography
+    <div class="search-result-count">
+        @typography(['variant' => 'h2', 'element' => 'h2'])
+        Found {{ $resultCount }} hits 
+        @endtypography
+    </div>
 
 </section>
 
@@ -36,18 +38,6 @@
 @else
 
 <section class="u-mt-0 u-margin__top--2">
-
-
-    @if ($wp_query->max_num_pages > 1)
-
-        @pagination([
-            'list' => $pagination,
-            'current' => isset($_GET['pagination']) ? $_GET['pagination'] : 1,
-            'classList' => ['u-margin__bottom--2']
-        ])
-        @endpagination
-
-    @endif
 
     @if ($template === 'grid')
                 

@@ -7,8 +7,7 @@ class Search extends \Municipio\Controller\BaseController
 
     public function init()
     {
-        /* global $wp_query;
-        die(print_r(array_keys(get_object_vars($wp_query)))); */
+
         //Translations
         $this->data['translation'] = array(
             'filter_results' => __("Filter searchresults", 'municipio'),
@@ -89,7 +88,7 @@ class Search extends \Municipio\Controller\BaseController
         global $wp_query;
         $posts = $wp_query->posts;
         $searchResult = [];
-        /* die(print_r($posts)); */
+        
         foreach($posts as $post){
             //$excerpt = get_the_excerpt($post->ID);
             
@@ -112,7 +111,7 @@ class Search extends \Municipio\Controller\BaseController
     {
         $parentPostID = wp_get_post_parent_id( $postID );
         $parentPost = get_post($parentPostID);
-        //die(var_dump($parentPost));
+        
         return $parentPost;
     }
     

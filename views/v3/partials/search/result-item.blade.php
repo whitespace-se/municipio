@@ -1,14 +1,19 @@
 <div class="search-result-item u-margin__bottom--4">
-    @typography(['variant' => 'h4', 'element' => 'h4'])
-        @link([
-            'href' => $result['topMostPostParent']->href,
-            'classList' => ['search-result-item__parent-title-link']
-        ])
-            {{$result['topMostPostParent']->post_title}}
-        @endlink
-        
-          
-    @endtypography
+
+    @if(isset($result['topMostPostParent']))
+        @typography(['variant' => 'h4', 'element' => 'h4', 'classList' => ['u-margin__bottom--1']])
+
+            @link([
+                'href' => $result['topMostPostParent']->href,
+                'classList' => ['search-result-item__parent-title-link']
+            ])
+
+                {{$result['topMostPostParent']->post_title}}
+
+            @endlink
+
+        @endtypography
+    @endif
 
     @typography(['variant' => 'h3', 'element' => 'h3'])
         @link([
@@ -17,7 +22,11 @@
         ])
             {{$result['postParent']->post_title}}
         @endlink
-        /
+
+        @typography(['variant' => 'span', 'element' => 'span'])
+            /
+        @endtypography
+
         @link([
             'href' => $result['permalink'],
             'classList' => ['search-result-item__title-link']
@@ -26,15 +35,6 @@
         @endlink
           
     @endtypography
- 
-    <p style="display: inline-block;">
-        @if($result['featuredImage'])
-            <img src="{{$result['featuredImage']}}">
-        @endif
-        {{$result['excerpt']}}
-    </p>
-
-
 
     @typography(['variant' => 'caption'])
         <span class="search-result-item__link-prefix"> 
