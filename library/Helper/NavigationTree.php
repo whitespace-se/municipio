@@ -13,8 +13,8 @@ class NavigationTree
     protected $currentPostType = [];
     protected $currentNavigationPageForPosttype = [];
     protected $ancestors = null;
-    protected $pageForPostTypeOptions = []; 
-    protected $isPostTypeArchive = null;
+    // protected $pageForPostTypeOptions = []; 
+    // protected $isPostTypeArchive = null;
 
     protected $topLevelPages = null;
     protected $secondLevelPages = null;
@@ -304,15 +304,16 @@ class NavigationTree
     {
 
         //Get cached value
-        if(!isset($this->isPostTypeArchive)) {
-            $this->isPostTypeArchive = is_post_type_archive(); 
+        if(!isset(self::$runtimeCache['isPostTypeArchive'])) {
+            self::$runtimeCache['isPostTypeArchive'] = is_post_type_archive(); 
         }
 
-        if ($this->isPostTypeArchive) {
-            if(array_key_exists('page_for_' . $this->getPostType(), $this->pageForPostTypeOptions)) {
-                $pageForPostType = $this->pageForPostTypeOptions['page_for_' . $this->getPostType()]; 
+        if (self::$runtimeCache['isPostTypeArchive']) {
+            $pt = get_post_type();
+            if(array_key_exists('page_for_' . $pt, self::$runtimeCache['pageForPostTypeOptions'])) {
+                $pageForPostType =  self::$runtimeCache['pageForPostTypeOptions']['page_for_' . $pt]; 
             } else {
-                $pageForPostType = $this->pageForPostTypeOptions['page_for_' . $this->getPostType()] = $this->getOption('page_for_' . $this->getPostType()); 
+                $pageForPostType = self::$runtimeCache['pageForPostTypeOptions']['page_for_' . $pt] = $this->getOption('page_for_' . $pt); 
             }
             return $this->getPost($pageForPostType);
         }
@@ -332,7 +333,7 @@ class NavigationTree
      */
     protected function getCurrentNavigation()
     {
-        $slug = 'page_for_' . $this->getPostType() . '_navigation'; 
+        $slug = 'page_for_' . get_post_type() . '_navigation'; 
         if(array_key_exists($slug, $this->currentNavigationPageForPosttype)) {
             return $this->currentNavigationPageForPosttype[$slug]; 
         }
@@ -387,7 +388,7 @@ class NavigationTree
 
         return get_posts(array(
             'post_parent' => $parent,
-            'post_type' => $this->getPostType($parent),
+            'post_type' => get_post_type($parent),
             'post_status' => $this->postStatuses,
             'orderby' => 'menu_order post_title',
             'order' => 'asc',
@@ -782,3 +783,5 @@ class NavigationTree
         return self::$runtimeCache['posts'][$arrKey] = get_post($post === 'post' ? null : $arrKey);
     }
 }
+
+
