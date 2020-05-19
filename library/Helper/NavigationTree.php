@@ -19,7 +19,7 @@ class NavigationTree
     protected $topLevelPages = null;
     protected $secondLevelPages = null;
 
-    protected $pageForPostTypeIds = null;
+    protected static $pageForPostTypeIds = null;
 
     public $itemCount = 0;
     protected $depth = 0;
@@ -349,7 +349,7 @@ class NavigationTree
     {
         $key = array_search($parent, $this->getPageForPostTypeIds());
 
-        if ($key && is_post_type_hierarchical($key)) {
+        if ($key && $this->isPostTypeHierarchical($key)) {
             $inMenu = false;
 
             foreach ($this->getField('avabile_dynamic_post_types', 'options') as $type) {
@@ -413,8 +413,8 @@ class NavigationTree
 
     protected function getPageForPostTypeIds()
     {
-        if (is_array($this->pageForPostTypeIds)) {
-            return $this->pageForPostTypeIds;
+        if (is_array(self::$pageForPostTypeIds)) {
+            return self::$pageForPostTypeIds;
         }
 
         $pageIds = array();
@@ -437,8 +437,7 @@ class NavigationTree
             $pageIds[$postType->name] = $pageId;
         }
 
-        $this->pageForPostTypeIds = $pageIds;
-        return $this->pageForPostTypeIds;
+        return self::$pageForPostTypeIds = $pageIds;
     }
 
     /**
@@ -781,6 +780,28 @@ class NavigationTree
         }
 
         return self::$runtimeCache['posts'][$arrKey] = get_post($post === 'post' ? null : $arrKey);
+    }
+
+    /**
+     * Check if a posttype is hierarchical
+     *
+     * @param string $postType
+     * @return boolean
+     */
+    public static function isPostTypeHierarchical($postType) {
+        
+        //Create array
+        if(isset(self::$runtimeCache['postTypeHierarchical'])) {
+            self::$runtimeCache['postTypeHierarchical'] = array();
+        }
+
+        //Get from cache
+        if(isset(self::$runtimeCache['postTypeHierarchical'][$postType])) {
+            return self::$runtimeCache['postTypeHierarchical'][$postType]; 
+        }
+        
+        //Store to cache & return
+        return self::$runtimeCache['postTypeHierarchical'][$postType] = is_post_type_hierarchical($postType); 
     }
 }
 
