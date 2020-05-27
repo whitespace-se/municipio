@@ -7,7 +7,6 @@ class Search extends \Municipio\Controller\BaseController
 
     public function init()
     {
-
         //Translations
         $this->data['translation'] = array(
             'filter_results' => __("Filter searchresults", 'municipio'),
@@ -88,9 +87,8 @@ class Search extends \Municipio\Controller\BaseController
         global $wp_query;
         $posts = $wp_query->posts;
         $searchResult = [];
-        
+    
         foreach($posts as $post){
-            //$excerpt = get_the_excerpt($post->ID);
             
             $searchResult[] = array(
                 'author' => get_the_author_meta( 'display_name', $post->post_author ),
@@ -111,20 +109,19 @@ class Search extends \Municipio\Controller\BaseController
     {
         $parentPostID = wp_get_post_parent_id( $postID );
         $parentPost = get_post($parentPostID);
-        
+
         return $parentPost;
     }
     
     private function getTopMostParentPost($post){
-        if ( 0 == $post->post_parent ) {
-            return the_title();
-        } else {
+        
             $parents = get_post_ancestors( $post->ID );
             $parentID = end ( $parents );
             $parent = get_post($parentID);
             $parent->href = get_permalink($parentID);
+
             return apply_filters( "Municipio/Controller/Search/getTopMostParentPost", $parent);
-        }
+        
     }
 
     /**
