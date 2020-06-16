@@ -92,5 +92,6 @@ class App
             $paths[] = get_template_directory() . '/views';
             return $paths;
         });
+
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Municipio\Controller;
 
-class FullWidth extends \Municipio\Controller\Singular
+class PageTwoColumn extends \Municipio\Controller\Singular
 {
     public function init()
     {
@@ -51,7 +51,6 @@ class FullWidth extends \Municipio\Controller\Singular
 
         //Should link author page
         $this->data['authorPages'] = apply_filters('Municipio/author/hasAuthorPage', false);
-
 
     }
 }

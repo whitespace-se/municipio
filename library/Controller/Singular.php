@@ -63,7 +63,7 @@ class Singular extends \Municipio\Controller\BaseController
      * @param $id
      * @return object
      */
-    private function getAuthor($id): object
+    protected function getAuthor($id): object
     {
         $author = array();
         $author['name'] = get_the_author_meta( 'display_name', $this->data['post']->postAuthor );  
@@ -76,7 +76,7 @@ class Singular extends \Municipio\Controller\BaseController
      * @param $id
      * @return mixed
      */
-    private function getPostDates($id)
+    protected function getPostDates($id)
     {
         return apply_filters('Municipio/Controller/Singular/publishDate', (object) [
             'published' => get_the_date(), 
@@ -89,7 +89,7 @@ class Singular extends \Municipio\Controller\BaseController
      * @param $size Name or array for size of image
      * @return array An array of data related to the image
      */
-    private function getFeatureImage($id, $size = [1920,1080])
+    protected function getFeatureImage($id, $size = [1920,1080])
     {
         $image_id = get_post_thumbnail_id($id);
 
