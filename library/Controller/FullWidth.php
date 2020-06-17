@@ -7,6 +7,16 @@ class FullWidth extends \Municipio\Controller\Singular
     public function init()
     {
 
+        $this->data['template'] = [
+            'xs' => [1,13],
+            'sm' => [1,13],
+            'md' => [1,13],
+            'lg' => [1,13],
+            'xl' => [1,13]
+        ];
+
+        $this->data['template']['sidebar'] = false;
+
         //Get post data
         $this->data['post'] = \Municipio\Helper\Post::preparePostObject(get_post());
 

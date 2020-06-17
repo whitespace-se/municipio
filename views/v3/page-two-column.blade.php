@@ -1,1 +1,1 @@
-@extends('templates.single')
+@extends('templates.single', ['column' => 2])

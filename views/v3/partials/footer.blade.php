@@ -1,5 +1,6 @@
+
 @if (is_active_sidebar('bottom-sidebar'))
-    <?php dynamic_sidebar('bottom-sidebar'); ?>
+    @includeIf('partials.sidebar', ['id' => 'bottom-sidebar'])
 @endif
 
 @footer([

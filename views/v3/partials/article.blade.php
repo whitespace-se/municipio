@@ -19,8 +19,7 @@
 	<!-- Content -->
 	@typography([])
 		{!! $postContentFiltered !!}
-	@endtypography	
-    
+	@endtypography
 
     <!-- Signature -->
     @if($postTypeDetails->hierarchical)

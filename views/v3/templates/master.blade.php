@@ -60,7 +60,10 @@
                     @endgrid
                 @endgrid
 
+                <!-- CONTENT AREA & SIDEBAR -->
                 @grid(["container" => true, 'classList' => ['u-margin__top--8']])
+
+                    {{--
                     @grid([
                             "col" => [
                                 "xs" => [1,13],
@@ -77,8 +80,10 @@
                                 "xl" => [1,2]
                             ]
                         ])
-                    {{-- Sidebar left --}} {{-- TODO: RENAME TO "SIDEBAR" --}}
-                        @hasSection('sidebar-left')
+
+
+
+                       @hasSection('sidebar-left')
                             @includeIf('partials.sidebar', ['id' => 'sidebar-left'])
                             @sidebar([
                                 'logo' => $logotype->standard['url'],
@@ -86,31 +91,26 @@
                             ])
                             @endsidebar
                         @endif
+
+
                     @endgrid
+                    --}}
+
 
                 {{-- Content --}}
-                <!-- <div class="{{-- $layout['content'] --}} content"> -->
+                    <!-- <div class="{{-- $layout['content'] --}} content"> -->
+                    @hasSection('content')
+                        @yield('content')
+                    @endif
 
-                    
-                    @grid([
-                        "col" => [
-                            "xs" => [1,13],
-                            "sm" => [1,13],
-                            "md" => [1,13],
-                            "lg" => [3,9],
-                            "xl" => [3,10]
-                        ],
-                        "row" => [
-                            "xs" => [1,2],
-                            "sm" => [1,2],
-                            "md" => [1,2],
-                            "lg" => [1,2],
-                            "xl" => [1,2]
-                        ]
-                    ])
-                    @yield('content')
-                    @endgrid
+                    @hasSection('sidebar-right')
+                        @yield('sidebar-right')
+                    @endif
+
                 @endgrid
+
+
+
 
                 <!-- FAB -->
                 @fab([
