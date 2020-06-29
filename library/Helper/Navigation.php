@@ -342,6 +342,12 @@ class Navigation
     
     if(is_array($objects) && !empty($objects)) {
       foreach($objects as $key => $item) {
+
+        //Label empty = remove
+        if(empty($item['post_title'])) {
+          unset($objects[$key]);
+        }
+
         if($menu == false) {
           $objects[$key] = self::transformObject(
             self::hasChildren(
@@ -356,11 +362,9 @@ class Navigation
           );
         } else {
           $objects[$key] = self::transformObject(
-            self::hasChildren(
-              self::appendIsAncestorPost(
-                self::appendIsCurrentPost(
-                  $item
-                )
+            self::appendIsAncestorPost(
+              self::appendIsCurrentPost(
+                $item
               )
             )
           );
