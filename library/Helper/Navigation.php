@@ -449,12 +449,15 @@ class Navigation
   private static function getHiddenPostIds(string $metaKey = "hide_in_menu") : array
   {
 
-    //Get meta TODO: Prepare Query
-    $result = (array) self::$db->get_results("
-      SELECT post_id, meta_value 
-      FROM ". self::$db->postmeta ." 
-      WHERE meta_key = '$metaKey'
-    "); 
+    //Get meta
+    $result = (array) self::$db->get_results(
+      self::$db->prepare("
+        SELECT post_id, meta_value 
+        FROM ". self::$db->postmeta ." 
+        WHERE meta_key = %s"
+        , $metaKey
+      )
+    ); 
 
     //Declare result
     $hiddenPages = []; 
