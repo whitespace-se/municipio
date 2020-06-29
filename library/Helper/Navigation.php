@@ -54,7 +54,7 @@ class Navigation
                   'post_parent' => $item->menu_item_parent
               ];
           }
-          
+
           return self::buildTree(
             self::complementObjects($result)
           );
@@ -160,20 +160,6 @@ class Navigation
 
           return apply_filters('Municipio/Breadcrumbs/Items', $pageData, get_queried_object());
       }
-  }
-
-  /**
-   * Get flat array with top level items
-   * 
-   * @param   array     $postId             The current post id
-   * @depends           getNested           Must invoke get nested function
-   * 
-   * @return  array                         Flat top level page array
-   */
-  private static function getTopLevel($postId) : array  //TODO: IS THIS USED? 
-  {
-    //Get top level
-    return self::getNested($postId, true, 1); 
   }
 
   /**
