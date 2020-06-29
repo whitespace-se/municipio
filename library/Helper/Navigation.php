@@ -56,7 +56,7 @@ class Navigation
           }
 
           return self::buildTree(
-            self::complementObjects($result)
+            self::complementObjects($result, true)
           );
 
         }
@@ -184,7 +184,7 @@ class Navigation
     $result = self::getItems($parents); 
 
     //Add more values
-    $result = self::complementObjects($result); 
+    $result = self::complementObjects($result, false); 
 
     //Return done
     return $result; 
@@ -329,21 +329,33 @@ class Navigation
    * 
    * @return  array    $objects     The post array, with appended data
    */
-  private static function complementObjects($objects) {
+  private static function complementObjects($objects, $menu = false) {
     
     if(is_array($objects) && !empty($objects)) {
       foreach($objects as $key => $item) {
-        $objects[$key] = self::transformObject(
-          self::hasChildren(
-            self::appendIsAncestorPost(
-              self::appendIsCurrentPost(
-                self::customTitle(
-                  self::appendHref($item)
+        if($menu == false) {
+          $objects[$key] = self::transformObject(
+            self::hasChildren(
+              self::appendIsAncestorPost(
+                self::appendIsCurrentPost(
+                  self::customTitle(
+                    self::appendHref($item)
+                  )
                 )
               )
             )
-          )
-        );
+          );
+        } else {
+          $objects[$key] = self::transformObject(
+            self::hasChildren(
+              self::appendIsAncestorPost(
+                self::appendIsCurrentPost(
+                  $item
+                )
+              )
+            )
+          );
+        }
       }
     }
 
