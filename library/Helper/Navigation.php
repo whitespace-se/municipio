@@ -350,40 +350,6 @@ class Navigation
     return $objects; 
   }
 
-
-  /**
-   * Calculate add add data to array
-   * 
-   * @param   object   $objects     The post array
-   * 
-   * @return  array    $objects     The post array, with appended data
-   */
-  private static function complementMenuItems($objects) {
-    
-    if(is_array($objects) && !empty($objects)) {
-      foreach($objects as $key => $item) {
-
-
-        var_dump($item); 
-
-        $objects[$key] = 
-            self::appendIsCurrentPost(
-              $item
-            );
-      
-      }
-    }
-
-
-    /*
-    self::hasChildren(
-          self::appendIsAncestorPost(
-
-    */
-
-    return $objects; 
-  }
-
   /**
    * Add post is ancestor data on post array
    * 
