@@ -3,8 +3,10 @@
 namespace Municipio\Helper;
 
 /**
-* TODO: CHANGE NAME OF THIS CLASS
-* Navigation items
+* NAVIGATION
+* 
+* Fetching a structured array of a menu, and fallbacks 
+* (if needed) to the page structure on the site. 
 *
 * @author   Sebastian Thulin <sebastian.thulin@helsingborg.se>
 * @since    3.0.0
@@ -15,20 +17,31 @@ class Navigation
 {
   private static $db;
   private static $postId = null;
+  private static $runtimeCache = [];
 
   /**
    * Get WordPress menu items (from default menu management)
    *
-   * @param string $menu The menu id to get
-   * @param integer $postId
+   * @param string $menu      The menu id to get
+   * @param integer $postId   The current post id
+   * 
    * @return null|array
    */
   public static function getWpMenuItems($menu, $postId, $fallbackToPageTree = false)
   {
 
+    //Query hash
+    $queryHash = md5(json_encode(array($menu, $postId, $fallbackToPageTree))); 
+
+    //Get cache
+    if(isset(self::$runtimeCache[$queryHash])) {
+      return self::$runtimeCache[$queryHash];
+    }
+
     //Create local instance of wpdb
     self::globalToLocal('wpdb', 'db');
 
+    //Store the post id globally, also verify that the post id is correct
     if(is_null(self::$postId)) {
       if(is_numeric($postId)) {
         self::$postId = $postId; 
@@ -55,22 +68,18 @@ class Navigation
               ];
           }
 
-          return self::buildTree(
-            self::complementObjects($result, true)
-          );
+          return self::$runtimeCache[$queryHash] = self::buildTree(self::complementObjects($result, true));
 
         }
     }
 
     //Get menu from page/post structure if no menu defined
     if($fallbackToPageTree === true && is_numeric($postId)) {
-      return self::buildTree(
-        self::getNested()
-      );
+      return self::$runtimeCache[$queryHash] = self::buildTree(self::getNested());
     } 
 
     //Nothing found, return null
-    return null;
+    return self::$runtimeCache[$queryHash] = null;
   }
 
   /**
