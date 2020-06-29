@@ -60,10 +60,9 @@ class Navigation
 
           foreach ($menuItems as $item) {
               $result[$item->ID] = [
-                  'ID' => $item->object_id,
+                  'ID' => $item->ID,
                   'post_title' => $item->title,
                   'href' => $item->url,
-                  'children' => [],
                   'post_parent' => $item->menu_item_parent
               ];
           }
@@ -257,7 +256,7 @@ class Navigation
       foreach ($elements as $element) {
         if ($element['post_parent'] == $parentId) {
 
-          $children = self::buildTree($elements, $element['ID']);
+          $children = self::buildTree($elements, $element['id']);
 
           if ($children) {
             $element['children'] = $children;
@@ -453,6 +452,7 @@ class Navigation
       
       //Unset data not needed
       unset($array['post_title']); 
+      unset($array['ID']); 
 
       return $array; 
   }
