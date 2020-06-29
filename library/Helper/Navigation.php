@@ -17,6 +17,152 @@ class Navigation
   private static $postId = null;
 
   /**
+   * Get WordPress menu items (from default menu management)
+   *
+   * @param string $menu The menu id to get
+   * @param integer $postId
+   * @return null|array
+   */
+  public static function getWpMenuItems($menu, $postId, $fallbackToPageTree = false)
+  {
+
+    //Create local instance of wpdb
+    self::globalToLocal('wpdb', 'db');
+
+    if(is_null(self::$postId)) {
+      if(is_numeric($postId)) {
+        self::$postId = $postId; 
+      } else {
+        throw new \Exception("Navigation build error: Provided is not a valid post id (should be number)."); 
+      }
+    }
+
+    //Check for existing wp menu and fetch it if exists
+    if (has_nav_menu($menu)) {
+        $menuItems = wp_get_nav_menu_items(get_nav_menu_locations()[$menu]); 
+
+        if(is_array($menuItems) && !empty($menuItems)) {
+
+          $result = []; //Storage of result
+
+          foreach ($menuItems as $item) {
+              $result[$item->ID] = [
+                  'ID' => $item->object_id,
+                  'post_title' => $item->title,
+                  'href' => $item->url,
+                  'children' => [],
+                  'post_parent' => $item->menu_item_parent
+              ];
+          }
+          
+          return self::buildTree(
+            self::complementObjects($result)
+          );
+
+        }
+    }
+
+    //Get menu from page/post structure if no menu defined
+    if($fallbackToPageTree === true && is_numeric($postId)) {
+      return self::buildTree(
+        self::getNested()
+      );
+    } 
+
+    //Nothing found, return null
+    return null;
+  }
+
+  /**
+   * BreadCrumbData
+   * Fetching data for breadcrumbs
+   * @return array|void
+   * @throws \Exception
+   */
+  public static function getBreadcrumbItems() //TODO: Integrate with class more. 
+  {
+      global $post; //TODO: Ugh remove
+
+      if (!is_a($post, 'WP_Post')) {
+          return;
+      }
+
+      if (!is_front_page()) {
+
+          $post_type = get_post_type_object($post->post_type);
+          $pageData = array();
+
+          $id = \Municipio\Helper\Hash::mkUniqueId();
+
+          $pageData[$id]['label'] = __('Home');
+          $pageData[$id]['href'] = get_home_url();
+          $pageData[$id]['current'] = false;
+          $pageData[$id]['icon'] = "home"; 
+
+          if (is_single() && $post_type->has_archive) {
+
+              $id = \Municipio\Helper\Hash::mkUniqueId();
+              $pageData[$id]['label'] = $post_type->label;
+
+              $pageData[$id]['href'] = (is_string($post_type->has_archive))
+                  ? get_permalink(get_page_by_path($post_type->has_archive))
+                  : get_post_type_archive_link($post_type->name);
+
+              $pageData[$id]['current'] = false;
+          }
+
+          if (is_page() || (is_single() && $post_type->hierarchical === true)) {
+              if ($post->post_parent) {
+
+                  $ancestors = array_reverse(get_post_ancestors($post->ID));
+                  $title = get_the_title();
+
+                  foreach ($ancestors as $ancestor) {
+                      if (get_post_status($ancestor) !== 'private') {
+                          $id = \Municipio\Helper\Hash::mkUniqueId();
+                          $pageData[$id]['label'] = get_the_title($ancestor);
+                          $pageData[$id]['href'] = get_permalink($ancestor);
+                          $pageData[$id]['current'] = false;
+                      }
+                  }
+
+                  $id = \Municipio\Helper\Hash::mkUniqueId();
+                  $pageData[$id]['label'] = $title;
+                  $pageData[$id]['href'] = '';
+                  $pageData[$id]['current'] = true;
+
+              } else {
+                  $id = \Municipio\Helper\Hash::mkUniqueId();
+                  $pageData[$id]['label'] = get_the_title();
+                  $pageData[$id]['href'] = '';
+                  $pageData[$id]['current'] = true;
+              }
+
+          } else {
+
+              if (is_home()) {
+                  $title = single_post_title("", false);
+              } elseif (is_tax()) {
+                  $title = single_cat_title(null, false);
+              } elseif (is_category() && $title = get_the_category()) {
+                  $title = $title[0]->name;
+              } elseif (is_archive()) {
+                  $title = post_type_archive_title(null, false);
+              } else {
+                  $title = get_the_title();
+              }
+
+              $id = \Municipio\Helper\Hash::mkUniqueId();
+              $pageData[$id]['label'] = $title;
+              $pageData[$id]['href'] = '';
+              $pageData[$id]['current'] = false;
+          }
+
+          return apply_filters('Municipio/Breadcrumbs/Items', $pageData, get_queried_object());
+      }
+  }
+
+  /**
    * Get flat array with top level items
    * 
    * @param   array     $postId             The current post id
@@ -24,7 +170,7 @@ class Navigation
    * 
    * @return  array                         Flat top level page array
    */
-  public static function getTopLevel($postId) : array 
+  private static function getTopLevel($postId) : array  //TODO: IS THIS USED? 
   {
     //Get top level
     return self::getNested($postId, true, 1); 
@@ -39,39 +185,20 @@ class Navigation
    * 
    * @return  array                         Nested page array
    */
-  public static function getNested($postId, $includeTopLevel = true, $maxLevels = false) : array
+  private static function getNested($includeTopLevel = true) : array
   {
-
-    //Store current post id
-    if(is_null(self::$postId)) {
-      self::$postId = $postId; 
-    }
-
-    //Create local instance of wpdb
-    self::globalToLocal('wpdb', 'db');
-
     //Get all ancestors, append top level if true
     if($includeTopLevel === true) {
-      $parents = array_merge([0], (array) self::getAncestors($postId));
+      $parents = array_merge([0], (array) self::getAncestors(self::$postId));
     } else {
-      $parents = array_merge((array) self::getAncestors($postId));
-    }
-
-    //Max level limiter
-    if($maxLevels != false && is_numeric($maxLevels)) {
-      $parents = array_slice($parents, 0, $maxLevels);
+      $parents = array_merge((array) self::getAncestors(self::$postId));
     }
 
     //Get all parents
     $result = self::getItems($parents); 
 
-    //Format response 
-    $result = self::complementObjects($result);
-
-    //Restructure array to get tree, if multi level
-    if($maxLevels === false || (is_numeric($maxLevels) && $maxLevels != 1)) {
-      $result = self::buildTree($result);
-    }
+    //Add more values
+    $result = self::complementObjects($result); 
 
     //Return done
     return $result; 
@@ -87,7 +214,7 @@ class Navigation
   private static function hasChildren($array) : array
   {  
     if(!is_array($array)) {
-      return new \WP_Error("Append permalink object must recive an array."); 
+      return new \WP_Error("Has children must recive an array."); 
     }
 
     $children = self::$db->get_results("
@@ -164,14 +291,14 @@ class Navigation
 
     //Check if if valid post type string
     if($postType != 'all' && !is_array($postType) && !post_type_exists($postType)) {
-      return new \WP_Error("Could not get navigation menu for " . $postType . "since it dosen't exist."); 
+      return new \WP_Error("Could not create navigation menu for " . $postType . "since it dosen't exist."); 
     }
 
     //Check if if valid post type array
     if(is_array($postType)) {
       foreach($postType as $item) {
         if(!post_type_exists($item)) {
-          return new \WP_Error("Could not get navigation menu for " . $item . "since it dosen't exist."); 
+          return new \WP_Error("Could not create navigation menu for " . $item . "since it dosen't exist."); 
         }
       }
     }
@@ -196,7 +323,7 @@ class Navigation
     }
     $parent = implode(", ", $parent); 
 
-    //Run query TODO: Prepare Query
+    //Run query
     return self::$db->get_results("
       SELECT ID, post_title, post_parent 
       FROM " . self::$db->posts . " 
@@ -233,6 +360,40 @@ class Navigation
         );
       }
     }
+
+    return $objects; 
+  }
+
+
+  /**
+   * Calculate add add data to array
+   * 
+   * @param   object   $objects     The post array
+   * 
+   * @return  array    $objects     The post array, with appended data
+   */
+  private static function complementMenuItems($objects) {
+    
+    if(is_array($objects) && !empty($objects)) {
+      foreach($objects as $key => $item) {
+
+
+        var_dump($item); 
+
+        $objects[$key] = 
+            self::appendIsCurrentPost(
+              $item
+            );
+      
+      }
+    }
+
+
+    /*
+    self::hasChildren(
+          self::appendIsAncestorPost(
+
+    */
 
     return $objects; 
   }
@@ -417,136 +578,6 @@ class Navigation
 
     return $array; 
   }
-
-  /**
-   * Get WordPress menu items (from default menu management)
-   *
-   * @param string $menu The menu id to get
-   * @return bool|array
-   */
-  public static function getWpMenuItems($menu, $fallbackToPageTree = false, $pageId = null)
-  {
-
-      //Check for existing wp menu
-      if (has_nav_menu($menu)) {
-          
-          $menuItems = wp_get_nav_menu_items(get_nav_menu_locations()[$menu]); 
-
-          if(is_array($menuItems) && !empty($menuItems)) {
-
-            $result = []; //Storage of result
-
-            foreach ($menuItems as $item) {
-                $result[$item->ID] = [
-                    'ID' => $item->ID,
-                    'label' => $item->title,
-                    'href' => $item->url,
-                    'children' => [],
-                    'post_parent' => $item->menu_item_parent
-                ];
-            }
-
-            return self::buildTree($result); //Format with child tree
-
-          }
-
-      }
-
-      if($fallbackToPageTree === true && is_numeric($pageId)) {
-        return self::getNested($pageId); 
-      } 
-
-      return false;
-  }
-
-  /**
-     * BreadCrumbData
-     * Fetching data for breadcrumbs
-     * @return array|void
-     * @throws \Exception
-     */
-    public static function getBreadcrumbItems()
-    {
-        global $post;
-
-        if (!is_a($post, 'WP_Post')) {
-            return;
-        }
-
-        if (!is_front_page()) {
-
-            $post_type = get_post_type_object($post->post_type);
-            $pageData = array();
-
-            $id = \Municipio\Helper\Hash::mkUniqueId();
-
-            $pageData[$id]['label'] = __('Home');
-            $pageData[$id]['href'] = get_home_url();
-            $pageData[$id]['current'] = false;
-            $pageData[$id]['icon'] = "home"; 
-
-            if (is_single() && $post_type->has_archive) {
-
-                $id = \Municipio\Helper\Hash::mkUniqueId();
-                $pageData[$id]['label'] = $post_type->label;
-
-                $pageData[$id]['href'] = (is_string($post_type->has_archive))
-                    ? get_permalink(get_page_by_path($post_type->has_archive))
-                    : get_post_type_archive_link($post_type->name);
-
-                $pageData[$id]['current'] = false;
-            }
-
-            if (is_page() || (is_single() && $post_type->hierarchical === true)) {
-                if ($post->post_parent) {
-
-                    $ancestors = array_reverse(get_post_ancestors($post->ID));
-                    $title = get_the_title();
-
-                    foreach ($ancestors as $ancestor) {
-                        if (get_post_status($ancestor) !== 'private') {
-                            $id = \Municipio\Helper\Hash::mkUniqueId();
-                            $pageData[$id]['label'] = get_the_title($ancestor);
-                            $pageData[$id]['href'] = get_permalink($ancestor);
-                            $pageData[$id]['current'] = false;
-                        }
-                    }
-
-                    $id = \Municipio\Helper\Hash::mkUniqueId();
-                    $pageData[$id]['label'] = $title;
-                    $pageData[$id]['href'] = '';
-                    $pageData[$id]['current'] = true;
-
-                } else {
-                    $id = \Municipio\Helper\Hash::mkUniqueId();
-                    $pageData[$id]['label'] = get_the_title();
-                    $pageData[$id]['href'] = '';
-                    $pageData[$id]['current'] = true;
-                }
-
-            } else {
-
-                if (is_home()) {
-                    $title = single_post_title("", false);
-                } elseif (is_tax()) {
-                    $title = single_cat_title(null, false);
-                } elseif (is_category() && $title = get_the_category()) {
-                    $title = $title[0]->name;
-                } elseif (is_archive()) {
-                    $title = post_type_archive_title(null, false);
-                } else {
-                    $title = get_the_title();
-                }
-
-                $id = \Municipio\Helper\Hash::mkUniqueId();
-                $pageData[$id]['label'] = $title;
-                $pageData[$id]['href'] = '';
-                $pageData[$id]['current'] = false;
-            }
-
-            return apply_filters('Municipio/Breadcrumbs/Items', $pageData, get_queried_object());
-        }
-    }
 
   /**
    * Creates a local copy of the global instance
