@@ -53,18 +53,19 @@ class Navigation
     //Check for existing wp menu and fetch it if exists
     if (has_nav_menu($menu)) {
         $menuItems = wp_get_nav_menu_items(get_nav_menu_locations()[$menu]); 
-
+var_dump($menuItems);
         if(is_array($menuItems) && !empty($menuItems)) {
 
           $result = []; //Storage of result
 
           foreach ($menuItems as $item) {
-              $result[$item->ID] = [
-                  'ID' => $item->ID,
-                  'post_title' => $item->title,
-                  'href' => $item->url,
-                  'post_parent' => $item->menu_item_parent
-              ];
+            $result[$item->ID] = [
+              'ID' => $item->ID,
+              'post_title' => $item->title,
+              'href' => $item->url,
+              'post_parent' => $item->menu_item_parent,
+              'object_id' => $item->object_id
+            ];
           }
 
           return self::$runtimeCache[$queryHash] = self::buildTree(self::complementObjects($result, true));
@@ -387,8 +388,14 @@ class Navigation
         return new \WP_Error("Append permalink object must recive an array."); 
       }
 
+      //Is parent post
       if(in_array($array['ID'], self::getAncestors(self::$postId))) {
         $array['ancestor'] = true; 
+      }
+
+      //Is parent tax item
+      if(isset($array['object_id']) && in_array($array['object_id'], self::getAncestors(self::$postId))) {
+        $array['ancestor'] = true;
       }
 
       return $array; 
@@ -407,7 +414,13 @@ class Navigation
         return new \WP_Error("Append permalink function must recive an array."); 
       }
 
+      //Is parent post
       if($array['ID'] == self::$postId) {
+        $array['active'] = true; 
+      }
+
+      //Is parent tax item
+      if(isset($array['object_id']) && $array['object_id'] == self::$postId) {
         $array['active'] = true; 
       }
       
