@@ -492,13 +492,16 @@ class Navigation
   private static function getMenuTitle(string $metaKey = "custom_menu_title") : array
   {
 
-    //Get meta TODO: Prepare Query
-    $result = (array) self::$db->get_results("
-      SELECT post_id, meta_value 
-      FROM ". self::$db->postmeta ." 
-      WHERE meta_key = '$metaKey'
-      AND meta_value != ''
-    "); 
+    //Get meta
+    $result = (array) self::$db->get_results(
+      self::$db->prepare("
+        SELECT post_id, meta_value 
+        FROM ". self::$db->postmeta ." 
+        WHERE meta_key = %s
+        AND meta_value != ''
+        ", $metaKey
+      )
+    ); 
 
     //Declare result
     $pageTitles = []; 
