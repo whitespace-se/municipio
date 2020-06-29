@@ -42,11 +42,11 @@ class BaseController
 
         //Navigation
         $this->data['breadcrumbItems']      = \Municipio\Helper\Navigation::getBreadcrumbItems();
-        $this->data['primaryMenuItems']     = \Municipio\Helper\Navigation::getWpMenuItems('main-menu', $this->getPageID(), true);     //True = Fallback to page structure
-        $this->data['secondaryMenuItems']   = \Municipio\Helper\Navigation::getWpMenuItems('main-menu', $this->getPageID(), true);     //True = Fallback to page structure
-        $this->data['tabMenuItems']         = \Municipio\Helper\Navigation::getWpMenuItems('header-tabs-menu', $this->getPageID());
-        $this->data['helpMenuItems']        = \Municipio\Helper\Navigation::getWpMenuItems('help-menu', $this->getPageID());
-        $this->data['dropdownMenuItems']    = \Municipio\Helper\Navigation::getWpMenuItems('dropdown-links-menu', $this->getPageID());
+        $this->data['primaryMenuItems']     = \Municipio\Helper\Navigation::getMenuItems('main-menu', $this->getPageID(), true);     //True = Fallback to page structure
+        $this->data['secondaryMenuItems']   = \Municipio\Helper\Navigation::getMenuItems('main-menu', $this->getPageID(), true);     //True = Fallback to page structure
+        $this->data['tabMenuItems']         = \Municipio\Helper\Navigation::getMenuItems('header-tabs-menu', $this->getPageID());
+        $this->data['helpMenuItems']        = \Municipio\Helper\Navigation::getMenuItems('help-menu', $this->getPageID());
+        $this->data['dropdownMenuItems']    = \Municipio\Helper\Navigation::getMenuItems('dropdown-links-menu', $this->getPageID());
         
         //Google translate location
         $this->data['translateLocation']    = get_field('show_google_translate', 'option');

@@ -15,9 +15,9 @@ namespace Municipio\Helper;
 
 class Navigation
 {
-  private static $db;
-  private static $postId = null;
-  private static $runtimeCache = [];
+  private static $db;                     //A wpdb private instance (in the state when originally inited).
+  private static $postId = null;          //The current post id
+  private static $runtimeCache = [];      //Caches the response of the class, if called multiple times. 
 
   /**
    * Get WordPress menu items (from default menu management)
@@ -27,7 +27,7 @@ class Navigation
    * 
    * @return null|array
    */
-  public static function getWpMenuItems($menu, $postId, $fallbackToPageTree = false)
+  public static function getMenuItems($menu, $postId, $fallbackToPageTree = false)
   {
 
     //Query hash
@@ -404,7 +404,7 @@ class Navigation
   private static function appendIsCurrentPost($array) : array
   {
       if(!is_array($array)) {
-        return new \WP_Error("Append permalink object must recive an array."); 
+        return new \WP_Error("Append permalink function must recive an array."); 
       }
 
       if($array['ID'] == self::$postId) {
@@ -425,7 +425,7 @@ class Navigation
   private static function appendHref($array, $leavename = false) : array
   {
       if(!is_array($array)) {
-        return new \WP_Error("Append permalink object must recive an array."); 
+        return new \WP_Error("Append permalink function must recive an array."); 
       }
 
       $array['href'] = get_permalink($array['ID'], $leavename);
@@ -443,7 +443,7 @@ class Navigation
   private static function transformObject($array) : array
   {
       if(!is_array($array)) {
-        return new \WP_Error("Transform object object must recive an array."); 
+        return new \WP_Error("Transform object function must recive an array."); 
       }
 
       //Move post_title to label key
@@ -453,6 +453,18 @@ class Navigation
       //Unset data not needed
       unset($array['post_title']); 
       unset($array['ID']); 
+
+      //Sort & enshure existence of keys
+      $array = array_merge(
+        array(
+          'id' => null, 
+          'post_parent' => null, 
+          'label' => null, 
+          'href' => null, 
+          'children' => null
+        ),
+        $array
+      ); 
 
       return $array; 
   }
