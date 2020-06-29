@@ -52,25 +52,25 @@ class Navigation
 
     //Check for existing wp menu and fetch it if exists
     if (has_nav_menu($menu)) {
-        $menuItems = wp_get_nav_menu_items(get_nav_menu_locations()[$menu]); 
-var_dump($menuItems);
-        if(is_array($menuItems) && !empty($menuItems)) {
+      $menuItems = wp_get_nav_menu_items(get_nav_menu_locations()[$menu]); 
 
-          $result = []; //Storage of result
+      if(is_array($menuItems) && !empty($menuItems)) {
 
-          foreach ($menuItems as $item) {
-            $result[$item->ID] = [
-              'ID' => $item->ID,
-              'post_title' => $item->title,
-              'href' => $item->url,
-              'post_parent' => $item->menu_item_parent,
-              'object_id' => $item->object_id
-            ];
-          }
+        $result = []; //Storage of result
 
-          return self::$runtimeCache[$queryHash] = self::buildTree(self::complementObjects($result, true));
-
+        foreach ($menuItems as $item) {
+          $result[$item->ID] = [
+            'ID' => $item->ID,
+            'post_title' => $item->title,
+            'href' => $item->url,
+            'post_parent' => $item->menu_item_parent,
+            'object_id' => $item->object_id
+          ];
         }
+
+        return self::$runtimeCache[$queryHash] = self::buildTree(self::complementObjects($result, true));
+
+      }
     }
 
     //Get menu from page/post structure if no menu defined
@@ -90,85 +90,87 @@ var_dump($menuItems);
    */
   public static function getBreadcrumbItems() //TODO: Integrate with class more. 
   {
-      global $post; //TODO: Ugh remove
+    global $post; //TODO: Ugh remove
 
-      if (!is_a($post, 'WP_Post')) {
-          return;
+    if (!is_a($post, 'WP_Post')) {
+        return;
+    }
+
+    if (!is_front_page()) {
+
+      $post_type = get_post_type_object($post->post_type);
+      $pageData = array();
+
+      $id = \Municipio\Helper\Hash::mkUniqueId();
+
+      $pageData[$id]['label'] = __('Home');
+      $pageData[$id]['href'] = get_home_url();
+      $pageData[$id]['current'] = false;
+      $pageData[$id]['icon'] = "home"; 
+
+      if (is_single() && $post_type->has_archive) {
+
+        $id = \Municipio\Helper\Hash::mkUniqueId();
+        $pageData[$id]['label'] = $post_type->label;
+
+        $pageData[$id]['href'] = (is_string($post_type->has_archive))
+            ? get_permalink(get_page_by_path($post_type->has_archive))
+            : get_post_type_archive_link($post_type->name);
+
+        $pageData[$id]['current'] = false;
+
       }
 
-      if (!is_front_page()) {
+      if (is_page() || (is_single() && $post_type->hierarchical === true)) {
+        if ($post->post_parent) {
 
-          $post_type = get_post_type_object($post->post_type);
-          $pageData = array();
+          $ancestors = array_reverse(get_post_ancestors($post->ID));
+          $title = get_the_title();
+
+          foreach ($ancestors as $ancestor) {
+              if (get_post_status($ancestor) !== 'private') {
+                  $id = \Municipio\Helper\Hash::mkUniqueId();
+                  $pageData[$id]['label'] = get_the_title($ancestor);
+                  $pageData[$id]['href'] = get_permalink($ancestor);
+                  $pageData[$id]['current'] = false;
+              }
+          }
 
           $id = \Municipio\Helper\Hash::mkUniqueId();
+          $pageData[$id]['label'] = $title;
+          $pageData[$id]['href'] = '';
+          $pageData[$id]['current'] = true;
 
-          $pageData[$id]['label'] = __('Home');
-          $pageData[$id]['href'] = get_home_url();
-          $pageData[$id]['current'] = false;
-          $pageData[$id]['icon'] = "home"; 
+        } else {
+          $id = \Municipio\Helper\Hash::mkUniqueId();
+          $pageData[$id]['label'] = get_the_title();
+          $pageData[$id]['href'] = '';
+          $pageData[$id]['current'] = true;
+        }
 
-          if (is_single() && $post_type->has_archive) {
+      } else {
 
-              $id = \Municipio\Helper\Hash::mkUniqueId();
-              $pageData[$id]['label'] = $post_type->label;
+        if (is_home()) {
+            $title = single_post_title("", false);
+        } elseif (is_tax()) {
+            $title = single_cat_title(null, false);
+        } elseif (is_category() && $title = get_the_category()) {
+            $title = $title[0]->name;
+        } elseif (is_archive()) {
+            $title = post_type_archive_title(null, false);
+        } else {
+            $title = get_the_title();
+        }
 
-              $pageData[$id]['href'] = (is_string($post_type->has_archive))
-                  ? get_permalink(get_page_by_path($post_type->has_archive))
-                  : get_post_type_archive_link($post_type->name);
+        $id = \Municipio\Helper\Hash::mkUniqueId();
+        $pageData[$id]['label'] = $title;
+        $pageData[$id]['href'] = '';
+        $pageData[$id]['current'] = false;
 
-              $pageData[$id]['current'] = false;
-          }
-
-          if (is_page() || (is_single() && $post_type->hierarchical === true)) {
-              if ($post->post_parent) {
-
-                  $ancestors = array_reverse(get_post_ancestors($post->ID));
-                  $title = get_the_title();
-
-                  foreach ($ancestors as $ancestor) {
-                      if (get_post_status($ancestor) !== 'private') {
-                          $id = \Municipio\Helper\Hash::mkUniqueId();
-                          $pageData[$id]['label'] = get_the_title($ancestor);
-                          $pageData[$id]['href'] = get_permalink($ancestor);
-                          $pageData[$id]['current'] = false;
-                      }
-                  }
-
-                  $id = \Municipio\Helper\Hash::mkUniqueId();
-                  $pageData[$id]['label'] = $title;
-                  $pageData[$id]['href'] = '';
-                  $pageData[$id]['current'] = true;
-
-              } else {
-                  $id = \Municipio\Helper\Hash::mkUniqueId();
-                  $pageData[$id]['label'] = get_the_title();
-                  $pageData[$id]['href'] = '';
-                  $pageData[$id]['current'] = true;
-              }
-
-          } else {
-
-              if (is_home()) {
-                  $title = single_post_title("", false);
-              } elseif (is_tax()) {
-                  $title = single_cat_title(null, false);
-              } elseif (is_category() && $title = get_the_category()) {
-                  $title = $title[0]->name;
-              } elseif (is_archive()) {
-                  $title = post_type_archive_title(null, false);
-              } else {
-                  $title = get_the_title();
-              }
-
-              $id = \Municipio\Helper\Hash::mkUniqueId();
-              $pageData[$id]['label'] = $title;
-              $pageData[$id]['href'] = '';
-              $pageData[$id]['current'] = false;
-          }
-
-          return apply_filters('Municipio/Breadcrumbs/Items', $pageData, get_queried_object());
       }
+
+      return apply_filters('Municipio/Breadcrumbs/Items', $pageData, get_queried_object());
+    }
   }
 
   /**
@@ -384,21 +386,21 @@ var_dump($menuItems);
    */
   private static function appendIsAncestorPost($array) : array
   {
-      if(!is_array($array)) {
-        return new \WP_Error("Append permalink object must recive an array."); 
-      }
+    if(!is_array($array)) {
+      return new \WP_Error("Append permalink object must recive an array."); 
+    }
 
-      //Is parent post
-      if(in_array($array['ID'], self::getAncestors(self::$postId))) {
-        $array['ancestor'] = true; 
-      }
+    //Is parent post
+    if(in_array($array['ID'], self::getAncestors(self::$postId))) {
+      $array['ancestor'] = true; 
+    }
 
-      //Is parent tax item
-      if(isset($array['object_id']) && in_array($array['object_id'], self::getAncestors(self::$postId))) {
-        $array['ancestor'] = true;
-      }
+    //Is parent tax item
+    if(isset($array['object_id']) && in_array($array['object_id'], self::getAncestors(self::$postId))) {
+      $array['ancestor'] = true;
+    }
 
-      return $array; 
+    return $array; 
   }
 
   /**
@@ -410,21 +412,21 @@ var_dump($menuItems);
    */
   private static function appendIsCurrentPost($array) : array
   {
-      if(!is_array($array)) {
-        return new \WP_Error("Append permalink function must recive an array."); 
-      }
+    if(!is_array($array)) {
+      return new \WP_Error("Append permalink function must recive an array."); 
+    }
 
-      //Is parent post
-      if($array['ID'] == self::$postId) {
-        $array['active'] = true; 
-      }
+    //Is parent post
+    if($array['ID'] == self::$postId) {
+      $array['active'] = true; 
+    }
 
-      //Is parent tax item
-      if(isset($array['object_id']) && $array['object_id'] == self::$postId) {
-        $array['active'] = true; 
-      }
-      
-      return $array; 
+    //Is parent tax item
+    if(isset($array['object_id']) && $array['object_id'] == self::$postId) {
+      $array['active'] = true; 
+    }
+    
+    return $array; 
   }
 
   /**
@@ -437,13 +439,13 @@ var_dump($menuItems);
    */
   private static function appendHref($array, $leavename = false) : array
   {
-      if(!is_array($array)) {
-        return new \WP_Error("Append permalink function must recive an array."); 
-      }
+    if(!is_array($array)) {
+      return new \WP_Error("Append permalink function must recive an array."); 
+    }
 
-      $array['href'] = get_permalink($array['ID'], $leavename);
+    $array['href'] = get_permalink($array['ID'], $leavename);
 
-      return $array; 
+    return $array; 
   }
 
   /**
@@ -455,31 +457,31 @@ var_dump($menuItems);
    */
   private static function transformObject($array) : array
   {
-      if(!is_array($array)) {
-        return new \WP_Error("Transform object function must recive an array."); 
-      }
+    if(!is_array($array)) {
+      return new \WP_Error("Transform object function must recive an array."); 
+    }
 
-      //Move post_title to label key
-      $array['label'] = $array['post_title'];
-      $array['id'] = $array['ID'];
-      
-      //Unset data not needed
-      unset($array['post_title']); 
-      unset($array['ID']); 
+    //Move post_title to label key
+    $array['label'] = $array['post_title'];
+    $array['id'] = $array['ID'];
+    
+    //Unset data not needed
+    unset($array['post_title']); 
+    unset($array['ID']); 
 
-      //Sort & enshure existence of keys
-      $array = array_merge(
-        array(
-          'id' => null, 
-          'post_parent' => null, 
-          'label' => null, 
-          'href' => null, 
-          'children' => null
-        ),
-        $array
-      ); 
+    //Sort & enshure existence of keys
+    $array = array_merge(
+      array(
+        'id' => null, 
+        'post_parent' => null, 
+        'label' => null, 
+        'href' => null, 
+        'children' => null
+      ),
+      $array
+    ); 
 
-      return $array; 
+    return $array; 
   }
 
   /**
