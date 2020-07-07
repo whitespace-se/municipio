@@ -424,7 +424,7 @@ class Navigation
    * @param string $menu The menu id to get
    * @return bool|array
    */
-  public static function getWpMenuItems($menu, $fallbackToPageTree = false, $pageId = null)
+  public static function getWpMenuItems($menu, $fallbackToPageTree = false, $pageId = null, $limits = array(1, PHP_INT_MAX))
   {
 
       //Check for existing wp menu
