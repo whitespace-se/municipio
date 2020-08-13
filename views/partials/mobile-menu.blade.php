@@ -1,4 +1,4 @@
-<form class="search" method="get" action="/">
+<!-- <form class="search" method="get" action="/">
     <label for="searchkeyword-mobile" class="sr-only">{{ get_field('search_label_text', 'option') ? get_field('search_label_text', 'option') : 'Search' }}</label>
 
     <div class="input-group">
@@ -7,11 +7,11 @@
             <input type="submit" class="btn btn-primary" value="{{ get_field('search_button_text', 'option') ? get_field('search_button_text', 'option') : 'Search' }}">
         </span>
     </div>
-</form>
+</form> -->
 
 {!! $navigation['mobileMenu'] !!}
 
-{!!
+<!-- {!!
     wp_nav_menu(array(
         'theme_location' => 'help-menu',
         'container' => 'nav',
@@ -28,4 +28,4 @@
         'depth' => 1,
         'fallback_cb' => '__return_false'
     ));
-!!}
+!!} -->
