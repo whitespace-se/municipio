@@ -16,7 +16,9 @@ class HoneyPot
 
         //Verification values
         $this->field_content = substr(md5(NONCE_SALT . NONCE_KEY), 5, 15);
-        $this->field_name = substr(md5(AUTH_KEY), 5, 15);
+        if(AUTH_KEY) {
+            $this->field_name = substr(md5(AUTH_KEY), 5, 15);
+        }
 
         //Print frontend fields
         add_filter('comment_form_logged_in_after', array($this, 'addHoneyPotFieldFilled'));

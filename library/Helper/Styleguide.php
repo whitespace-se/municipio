@@ -48,7 +48,7 @@ class Styleguide
      */
     private static function _getTheme()
     {
-        $theme = trim(get_field('color_scheme', 'option'));
+        $theme = trim(get_field('color_scheme', 'option') ?: '');
 
         if ($theme == '' && apply_filters('Municipio/Helper/Styleguide/_getTheme/triggerColorSchemeError', true)) {
             trigger_error("Missing color scheme in theme options.");
