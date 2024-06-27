@@ -157,7 +157,8 @@ class Enqueue
         wp_enqueue_script('municipio-ajax');
 
         //Load polyfill SAAS
-        wp_enqueue_script('polyfill', 'https://cdn.polyfill.io/v3/polyfill.min.js', 'municipio');
+        // ADDED BY WHITESPACE - 20240626 - Polykill security issue
+        // wp_enqueue_script('polyfill', 'https://cdn.polyfill.io/v3/polyfill.min.js', 'municipio');
 
         //Comment reply
         if (is_singular() && get_option('thread_comments')) {
